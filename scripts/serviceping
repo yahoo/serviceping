@@ -16,10 +16,11 @@ import time
 import math
 import optparse
 # noinspection PyCompatibility
+from serviceping import calc_deviation
 import urlparse
 
 
-TIMEOUT = 10  # Set a resonable timeout value
+TIMEOUT = 10  # Set a reasonable timeout value
 
 
 def exit_statistics():
@@ -115,22 +116,6 @@ def scan(host, port=80, url=None, https=False):
     if result == 0:
         return host, port, 'Open', code, durations, length
     return host, port, 'Closed', code, durations, length
-
-
-def calc_deviation(values, average):
-    """
-    Calculate the standard deviation of a list of values
-    @param values:
-    @param average:
-    @return:
-    """
-    size = len(values)
-    if size < 2:
-        return 0
-    calc_sum = 0.0
-    for n in range(0, size):
-        calc_sum += math.sqrt((values[n] - average) ** 2)
-    return math.sqrt((1.0 / (size - 1)) * (calc_sum / size))
 
 
 if __name__ == '__main__':
