@@ -21,9 +21,6 @@ Build Status
 .. image:: https://img.shields.io/pypi/l/serviceping.svg
     :target: https://pypi.python.org/pypi/serviceping/
 
-.. image:: https://readthedocs.org/projects/servicepingbadge/?version=latest
-    :target: http://serviceping.readthedocs.org/en/latest/
-    :alt: Documentation Status
 
 Installation
 ============
