@@ -22,16 +22,30 @@ setup_arguments = {
     'author_email': 'dhubbard@yahoo-inc.com',
     'url': 'http://github.com/yahoo/serviceping',
     'license': 'LICENSE.txt',
-    'packages': ['serviceping'],
     'description': 'A ping like tool for network services',
     'classifiers': [
             'License :: OSI Approved :: Apache License',
+            'Development Status :: 4 - Beta',
+            'Environment :: Console',
+            'Intended Audience :: Developers',
+            'Operating System :: MacOS :: MacOS X',
+            'Operating System :: POSIX :: BSD :: FreeBSD',
             'Operating System :: POSIX :: Linux',
-            'Programming Language :: Python',
+            'Operating System :: POSIX :: SunOS/Solaris',
+            'Operating System :: POSIX',
+            'Programming Language :: Python :: 2',
+            'Programming Language :: Python :: 2.7',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.4',
+            'Programming Language :: Python :: Implementation :: CPython',
+            'Programming Language :: Python :: Implementation :: PyPy',
+            'Topic :: System :: Systems Administration',
+            'Topic :: Utilities',
     ],
     'package_data': {
         'serviceping': ['package_metadata.json']
     },
+    'packages': ['serviceping'],
     'include_package_data': True,
 }
 

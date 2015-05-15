@@ -13,11 +13,13 @@ import socket
 import sys
 import datetime
 import time
-import math
 import optparse
-# noinspection PyCompatibility
 from serviceping import calc_deviation
-import urlparse
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 TIMEOUT = 10  # Set a reasonable timeout value
@@ -98,10 +100,10 @@ def scan(host, port=80, url=None, https=False):
         s = ssl.wrap_socket(s)
         ends['ssl'] = datetime.datetime.now()
     if result == 0 and url:
-        #s.sendall('get %s' % url)
+        # s.sendall('get %s' % url)
         starts['request'] = datetime.datetime.now()
-        s.send("GET %s HTTP/1.0\r\nHost: %s\r\n\r\n" % (url, host))
-        data = s.recv(1500)
+        s.send("GET {0} HTTP/1.0\r\nHost: {1}\r\n\r\n".format(url, host).encode('ascii'))
+        data = s.recv(1500).decode('ascii')
         length = len(data)
         try:
             code = data.split('\n')[0].split()[1]
@@ -120,14 +122,11 @@ def scan(host, port=80, url=None, https=False):
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
-    #noinspection PyArgumentList
     parser.add_option(
         "-c", dest="count", default=0, type="int",
         help="Number of pings to send")
-    #noinspection PyArgumentList
     parser.add_option(
         "-i", dest="interval", default=1, type="float", help="Ping interval")
-    #noinspection PyArgumentList
     parser.add_option(
         "-d", dest="timings", default=False, action="store_true",
         help="Show timings for the entire connection")
@@ -137,7 +136,7 @@ if __name__ == '__main__':
     https = False
     if command_args[0].startswith('http:') or \
             command_args[0].startswith('https:'):
-        urlp = urlparse.urlparse(command_args[0])
+        urlp = urlparse(command_args[0])
         hostname = urlp.hostname
         port = urlp.port
         if command_args[0].startswith('https:'):
@@ -170,7 +169,7 @@ if __name__ == '__main__':
     except socket.gaierror:
         print('serviceping: unknown host %s' % hostname, file=sys.stderr)
         sys.exit(1)
-    print('PORTPING %s:%s (%s:%s).' % (hostname, port, ip, port))
+    print('SERVICEPING %s:%s (%s:%s).' % (hostname, port, ip, port))
     while True:
         try:
             ip = socket.gethostbyname(hostname)

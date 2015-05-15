@@ -26,7 +26,7 @@ pip-log.txt
 # Unit test / coverage reports
 htmlcov/
 .coverage
-.tox
+/.tox/
 nosetests.xml
 .testrepository
 .cache
@@ -78,3 +78,8 @@ pip-delete-this-directory.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+package_metadata.json
+serviceping/package_metadata.json
+cobertura.xml
+nosetests.xml
