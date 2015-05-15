@@ -21,7 +21,7 @@ setup_arguments = {
     'author': 'Dwight Hubbard',
     'author_email': 'dhubbard@yahoo-inc.com',
     'url': 'http://github.com/yahoo/serviceping',
-    'license': 'LICENSE.txt',
+    'license': 'Apache',
     'description': 'A ping like tool for network services',
     'classifiers': [
             'License :: OSI Approved :: Apache Software License',
