@@ -1,0 +1,20 @@
+[run]
+branch = True
+source = serviceping
+omit =
+    tests/*
+    .tox*
+    /usr*
+    setup.py
+    *egg*
+    .venv/*
+    .tox/*
+    test/*
+cover_pylib = False
+
+[report]
+ignore-errors = True
+exclude_lines =
+    pragma: no cover
+    ^def test_
+precision = 1
