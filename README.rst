@@ -18,9 +18,6 @@ Build Status
 .. image:: https://img.shields.io/pypi/v/serviceping.svg
    :target: https://pypi.python.org/pypi/serviceping
 
-.. image:: https://pypip.in/py_versions/serviceping/badge.svg
-    :target: https://pypi.python.org/pypi/serviceping/
-
 .. image:: https://img.shields.io/pypi/l/serviceping.svg
     :target: https://pypi.python.org/pypi/serviceping/
 
