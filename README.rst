@@ -49,13 +49,16 @@ or from source:
 Usage
 =====
 
-Usage: serviceping [options] url | host[:port] | ip[:port]
+.. code-block::
 
-Options:
-  -h, --help   show this help message and exit
-  -c COUNT     Number of pings to send
-  -i INTERVAL  Ping interval
-  -d
+    Usage: serviceping [options] url | host[:port] | ip[:port]
+
+    Options:
+      -h, --help   show this help message and exit
+      -c COUNT     Number of pings to send
+      -i INTERVAL  Ping interval
+      -d
+
 
 Examples
 ========
