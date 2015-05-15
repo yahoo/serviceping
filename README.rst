@@ -1,7 +1,9 @@
-Network Service Ping
-********************
+serviceping
+***********
 
-This utility provides a ping like interface to ping tcp port services.
+This utility provides a script with a "ping" like
+interface to ping tcp port services.
+
 
 Build Status
 ============
@@ -62,7 +64,7 @@ The serviceping tool uses a syntax that mirrors that of the ping commmand.
 
 
 Ping port 80 (http) on www.yahoo.com
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here we ping www.yahoo.com via http (port 80).
 It is easy to see that that address has multiple hosts responding and the
@@ -80,7 +82,7 @@ latency of each request.
     $
 
 Same thing using ssl
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 Service ping can also connect to other ports such as the ssl port (443).
 
@@ -96,7 +98,8 @@ Service ping can also connect to other ports such as the ssl port (443).
     $
 
 Pinging a URL instead of the port
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Portping also allows specifying a URL.  If a URL is specified it will also
 perform an http get request and show the response.
 
@@ -121,8 +124,9 @@ are returning different amounts of data in their responses.
     rtt min/avg/max/dev = 62.98/73.31/87.14/56.00 ms
     $
 
-Getting a URL with timings
---------------------------
+
+Pinging a URL with timings
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The detailed timing flag adds timings for each step of each request.
 
@@ -147,7 +151,8 @@ It is clear that the host with address 157.166.226.25 is taking significantly lo
     rtt min/avg/max/dev = 156.69/212.76/327.43/138.24 ms
     $
 
----------------------------------------------
+License
+=======
 
 Code licensed under the Apache license. See LICENSE.txt
 file for terms.
