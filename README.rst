@@ -47,7 +47,7 @@ or from source:
 Usage
 =====
 
-Usage: serviceping [options] url|host[:port]|ip[:port]
+Usage: serviceping [options] url | host[:port] | ip[:port]
 
 Options:
   -h, --help   show this help message and exit
