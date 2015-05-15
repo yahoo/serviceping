@@ -24,7 +24,7 @@ setup_arguments = {
     'license': 'LICENSE.txt',
     'description': 'A ping like tool for network services',
     'classifiers': [
-            'License :: OSI Approved :: Apache License',
+            'License :: OSI Approved :: Apache Software License',
             'Development Status :: 4 - Beta',
             'Environment :: Console',
             'Intended Audience :: Developers',

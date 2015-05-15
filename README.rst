@@ -6,8 +6,8 @@ This utility provides a ping like interface to ping tcp port services.
 Build Status
 ============
 
-.. image:: https://img.shields.io/travis/dwighthubbard/serviceping.svg
-        :target: https://travis-ci.org/dwighthubbard/serviceping
+.. image:: https://travis-ci.org/yahoo/serviceping.svg
+    :target: https://travis-ci.org/yahoo/serviceping
 
 .. image:: https://coveralls.io/repos/yahoo/serviceping/badge.svg
   :target: https://coveralls.io/r/yahoo/serviceping
