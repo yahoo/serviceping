@@ -9,3 +9,6 @@ include README.md
 # Package Metadata
 include serviceping/package_metadata.json
 
+include serviceping
+
+recursive-include scripts *

@@ -149,4 +149,5 @@ if __name__ == '__main__':
     metadata = get_and_update_package_metadata()
     setup_arguments['version'] = metadata['version']
     setup_arguments['long_description'] = metadata['long_description']
+    add_scripts_to_package()
     setup(**setup_arguments)
