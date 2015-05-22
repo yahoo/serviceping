@@ -15,6 +15,8 @@ import datetime
 import time
 import optparse
 from serviceping import calc_deviation
+from serviceping.commandline import parse_arguments
+
 
 try:
     from urllib.parse import urlparse
@@ -121,16 +123,7 @@ def scan(host, port=80, url=None, https=False):
 
 
 if __name__ == '__main__':
-    parser = optparse.OptionParser()
-    parser.add_option(
-        "-c", dest="count", default=0, type="int",
-        help="Number of pings to send")
-    parser.add_option(
-        "-i", dest="interval", default=1, type="float", help="Ping interval")
-    parser.add_option(
-        "-d", dest="timings", default=False, action="store_true",
-        help="Show timings for the entire connection")
-    (options, command_args) = parser.parse_args()
+    (options, command_args) = parse_arguments()
 
     rc = 1
     https = False
