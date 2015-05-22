@@ -7,5 +7,5 @@ include README.rst
 include README.md
 
 # Package Metadata
-include redislite/package_metadata.json
+include serviceping/package_metadata.json
 
