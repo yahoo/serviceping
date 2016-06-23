@@ -86,7 +86,7 @@ multiple hosts responding and the latency of each request.
 Same thing using ssl
 ~~~~~~~~~~~~~~~~~~~~
 
-Service ping can also connect to other ports such as the ssl port (443).
+Serviceping can also connect to other ports such as the ssl port (443).
 
 .. code-block::
 
