@@ -69,9 +69,8 @@ The serviceping tool uses a syntax that mirrors that of the ping commmand.
 Ping port 80 (http) on www.yahoo.com
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here we ping www.yahoo.com via http (port 80).
-It is easy to see that that address has multiple hosts responding and the
-latency of each request.
+By pinging www.yahoo.com via http (port 80), we can clearly see the 
+multiple hosts responding and the latency of each request.
 
 .. code-block::
 
@@ -103,16 +102,12 @@ Service ping can also connect to other ports such as the ssl port (443).
 Pinging a URL instead of the port
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Portping also allows specifying a URL.  If a URL is specified it will also
-perform an http get request and show the response.
-
-This is useful to see when there are hosts doing unexpected things in a dns
+Portping can also specify a URL.  If a URL is specified, it will 
+perform an http get request and show the response, which is useful 
+when hosts are doing unexpected things in a dns
 rotation or behind a reverse proxy or vip.
 
 In this example we specify a url of http://cnn.com/
-
-This shows that there are two hosts responding to this request and that they
-are returning different amounts of data in their responses.
 
 .. code-block::
 
@@ -127,19 +122,16 @@ are returning different amounts of data in their responses.
     rtt min/avg/max/dev = 62.98/73.31/87.14/56.00 ms
     $
 
+The output shows that two hosts are responding to this request, and that they
+are returning different amounts of data in their responses.
 
 Pinging a URL with timings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The detailed timing flag adds timings for each step of each request.
-
-This is useful for determining what is causing latency issues or errors.
+The detailed timing flag adds timings for each step of each request, 
+which is useful for determining the causes of latency issues or errors.
 
 Here we are doing the previous example with detailed timings.
-
-In the results we can see a few new things.
-
-It is clear that the host with address 157.166.226.25 is taking significantly longer to establish the tcp connection and handle the http get request.
 
 .. code-block::
 
@@ -153,6 +145,9 @@ It is clear that the host with address 157.166.226.25 is taking significantly lo
     4 packets transmitted, 4 received, 0% packet loss, time 5009.0ms
     rtt min/avg/max/dev = 156.69/212.76/327.43/138.24 ms
     $
+
+Clearly, the host with address 157.166.226.25 is taking significantly longer 
+to establish the tcp connection and handle the http get request.
 
 License
 =======
