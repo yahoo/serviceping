@@ -8,15 +8,15 @@ Command line utility providing a ping like interface for pinging tcp/ssl
 services.
 """
 from __future__ import print_function
-import ssl
-import socket
-import sys
 import datetime
-import time
 import optparse
+import socket
+import ssl
+import sys
+import time
+
 from serviceping import calc_deviation
 from serviceping.commandline import parse_arguments
-
 
 try:
     from urllib.parse import urlparse
