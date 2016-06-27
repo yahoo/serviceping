@@ -51,13 +51,16 @@ Usage
 
 .. code-block::
 
-    Usage: serviceping [options] url | host[:port] | ip[:port]
+    usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-d]
+                       destination [destination ...]
+    positional arguments:
+      destination Destination host or URL
 
-    Options:
+    optional arguments:
       -h, --help   show this help message and exit
       -c COUNT     Number of pings to send
       -i INTERVAL  Ping interval
-      -d
+      -d           Show timings for the entire connection
 
 
 Examples
