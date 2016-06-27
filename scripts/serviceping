@@ -57,9 +57,9 @@ def exit_statistics():
         )
     print(
         'rtt min/avg/max/dev = %.2f/%.2f/%.2f/%.2f ms' % (
-            min_time.seconds * 1000 + float(min_time.microseconds) / 1000,
+            min_time.seconds*1000 + float(min_time.microseconds)/1000,
             float(avg_time) / 1000,
-            max_time.seconds * 1000 + float(max_time.microseconds) / 1000,
+            max_time.seconds*1000 + float(max_time.microseconds)/1000,
             float(deviation)
         )
     )
@@ -182,9 +182,8 @@ if __name__ == '__main__':
                         min_time:
                     min_time = durations['all']
                 times.append(
-                    durations['all'].seconds*1000+float(
-                        durations['all'].microseconds
-                    )
+                    durations['all'].seconds * 1000 
+                    + float(durations['all'].microseconds)
                 )
                 avg_time = sum(times) / float(len(times))
                 deviation = calc_deviation(times, avg_time)
@@ -205,8 +204,8 @@ if __name__ == '__main__':
                         if d in durations.keys():
                             print('%s=%.2fms' % (
                                 d,
-                                durations[d].seconds*1000 +
-                                float(durations[d].microseconds)/1000
+                                durations[d].seconds * 1000
+                                + float(durations[d].microseconds) / 1000
                             ), end=" ")
                 else:
                     print(
@@ -214,8 +213,8 @@ if __name__ == '__main__':
                             '%d bytes ' % length if length else '',
                             hostname, port, ip, port, code_string,
                             float(
-                                durations['all'].seconds*1000 +
-                                durations['all'].microseconds
+                                durations['all'].seconds * 1000
+                                + durations['all'].microseconds
                             ) / 1000
                         ),
                         end=" ")
