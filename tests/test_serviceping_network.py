@@ -1,15 +1,12 @@
-
 #!/usr/bin/env python
 # Copyright (c) 2013-2015, Yahoo Inc.
 # Copyrights licensed under the Apache 2.0 License
 # See the accompanying LICENSE.txt file for terms.
 
 """
-test_serviceping
-----------------------------------
-Tests for `serviceping` module.
+test serviceping network scan
 """
-from serviceping.scan import scan
+from serviceping.network import scan, ScanFailed
 import unittest
 
 
@@ -18,7 +15,9 @@ import unittest
 class TestServicepingScan(unittest.TestCase):
 
     def test_serviceping_scan_exception(self):
-        result =
+        with self.assertRaises(ScanFailed):
+            result = scan('localhost', 65500)
+        
 
 if __name__ == '__main__':
 unittest.main()
