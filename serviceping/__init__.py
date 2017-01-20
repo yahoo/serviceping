@@ -33,3 +33,4 @@ __source_url__ = __git_base_url__ + '/tree/' + __git_hash__
 
 
 from .serviceping import calc_deviation, StatsList
+from .network import scan
