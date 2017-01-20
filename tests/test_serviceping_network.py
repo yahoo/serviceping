@@ -14,10 +14,11 @@ import unittest
 # when the the class is run (by calling unittest.main()
 class TestServicepingScan(unittest.TestCase):
 
-    def test_serviceping_scan_exception(self):
-        with self.assertRaises(ScanFailed):
-            result = scan('localhost', port=65500)
-            print(result) 
+    def test_serviceping_scan_closed(self):
+        result = scan('localhost', port=65500)
+        self.assertEqual(result['state'], 'closed')
+        self.assertEqual(result['host'], 'localhost')
+        self.assertEqual(result['port'], 65500)
         
 
 if __name__ == '__main__':
