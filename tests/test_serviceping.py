@@ -10,6 +10,7 @@ test_serviceping
 Tests for `serviceping` module.
 """
 import serviceping
+import serviceping.serviceping
 import unittest
 
 
@@ -35,6 +36,11 @@ class TestServiceping(unittest.TestCase):
         result = serviceping.calc_deviation(times, avg_time)
         self.assertAlmostEqual(result, 0, places=3)
 
- 
+    def test_serviceping_StatsList_reset(self):
+        statslist = serviceping.serviceping.StatsList([1,2])
+        statslist.reset()
+        self.assertEqual(statslist.count, 0)
+
+
 if __name__ == '__main__':
     unittest.main()

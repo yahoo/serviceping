@@ -32,6 +32,15 @@ class TestServicepingScan(unittest.TestCase):
         self.assertEqual(result['host'], 'yahoo.com')
         self.assertEqual(result['port'], 443)
 
-        
+    def test_serviceping_scan_open_https_url(self):
+        result = scan(
+            'yahoo.com', port=443, https=True, url='https://yahoo.com/'
+        )
+        self.assertEqual(result['state'], 'open')
+        self.assertEqual(result['host'], 'yahoo.com')
+        self.assertEqual(result['port'], 443)
+        self.assertIn(result['code'], [200, 301])
+
+
 if __name__ == '__main__':
     unittest.main()

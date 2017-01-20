@@ -80,6 +80,8 @@ __pycache__/
 *.py[cod]
 
 package_metadata.json
-serviceping/package_metadata.json
+/serviceping/package_metadata.json
 cobertura.xml
 nosetests.xml
+
+/.tox
