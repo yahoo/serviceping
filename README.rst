@@ -14,9 +14,6 @@ Build Status
 .. image:: https://coveralls.io/repos/yahoo/serviceping/badge.svg
   :target: https://coveralls.io/r/yahoo/serviceping
 
-.. image:: https://img.shields.io/pypi/dm/serviceping.svg
-    :target: https://pypi.python.org/pypi/serviceping/
-    
 .. image:: https://img.shields.io/pypi/v/serviceping.svg
    :target: https://pypi.python.org/pypi/serviceping
 

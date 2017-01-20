@@ -1,3 +1,6 @@
+"""
+Command Line Utility Functions
+"""
 import argparse
 
 
@@ -18,6 +21,8 @@ def parse_arguments():
         "-d", dest="timings", default=False, action="store_true",
         help="Show timings for the entire connection"
     )
-    parser.add_argument('destination', nargs='+', help='Destination host or URL')
+    parser.add_argument(
+        'destination', nargs='+', help='Destination host or URL'
+    )
     args = parser.parse_args()
     return args, args.destination
