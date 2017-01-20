@@ -1,6 +1,6 @@
 Contributing to serviceping
 ============================================
-serviceping development occurs on github at:
+Serviceping development occurs on github at:
 https://github.com/yahoo/serviceping
 
 If you want to contribute to serviceping please work on a

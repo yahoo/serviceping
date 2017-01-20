@@ -31,8 +31,8 @@ class StatsList(object):
             self.old_m = self.new_m = x
             self.old_s = 0
         else:
-            self.new_m = self.old_m + (x - self.old_m) / self.count
-            self.new_s = self.old_s + (x - self.old_m) * (x - self.new_m)
+            self.new_m = self.old_m + (x-self.old_m) / self.count
+            self.new_s = self.old_s + (x-self.old_m) * (x-self.new_m)
 
             self.old_m = self.new_m
             self.old_s = self.new_s
@@ -44,7 +44,7 @@ class StatsList(object):
 
     def variance(self):
         if self.count > 1:
-            return self.new_s / (self.count - 1)
+            return self.new_s / (self.count-1)
         return 0.0
 
     def standard_deviation(self):
@@ -76,5 +76,5 @@ def calc_deviation(values, average):
 
     for n in range(0, size):
         calc_sum += math.sqrt((values[n] - average) ** 2)
-    return math.sqrt((1.0 / (size - 1)) * (calc_sum / size))
+    return math.sqrt((1.0 / (size-1)) * (calc_sum/size))
 

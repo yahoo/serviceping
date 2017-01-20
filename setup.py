@@ -3,8 +3,9 @@
 # Copyrights licensed under the Apache 2.0 License
 # See the accompanying LICENSE.txt file for terms.
 
-import os
 import json
+import os
+
 from setuptools import setup
 
 
