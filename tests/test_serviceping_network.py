@@ -16,7 +16,7 @@ class TestServicepingScan(unittest.TestCase):
 
     def test_serviceping_scan_exception(self):
         with self.assertRaises(ScanFailed):
-            result = scan('localhost', 65500)
+            result = scan('localhost', port=65500)
             print(result) 
         
 
