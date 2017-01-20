@@ -33,7 +33,7 @@ class TestServiceping(unittest.TestCase):
         print(len(times))
         print(serviceping.StatsList(times).standard_deviation())
         result = serviceping.calc_deviation(times, avg_time)
-        self.assertAlmostEqual(result, 0.232, places=3)
+        self.assertAlmostEqual(result, 0, places=3)
 
  
 if __name__ == '__main__':
