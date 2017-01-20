@@ -69,7 +69,7 @@ def scan(host, port=80, url=None, https=False, timeout=1):
     # TCP Connect
     starts['connect'] = time.time()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(TIMEOUT)
+    s.settimeout(timeout)
     result_connection = s.connect_ex((host, port))
     ends['connect'] = time.time()
 
