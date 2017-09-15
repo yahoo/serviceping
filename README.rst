@@ -152,5 +152,7 @@ to establish the tcp connection and handle the http get request.
 License
 =======
 
-Code licensed under the Apache license. See LICENSE.txt
-file for terms.
+Code is licensed under `Apache License 2.0`_
+
+.. _Apache License 2.0: LICENSE.txt
+
