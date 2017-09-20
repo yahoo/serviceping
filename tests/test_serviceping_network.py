@@ -18,6 +18,12 @@ class TestServicepingScan(unittest.TestCase):
         with self.assertRaises(ScanFailed):
             scan('pythonpython.python')
 
+    def test_serviceping_scan_no_max_size(self):
+        result = scan('localhost', port=65500, max_size=None)
+        self.assertEqual(result['state'], 'closed')
+        self.assertEqual(result['host'], 'localhost')
+        self.assertEqual(result['port'], 65500)
+
     def test_serviceping_scan_closed(self):
         result = scan('localhost', port=65500)
         self.assertEqual(result['state'], 'closed')
@@ -80,6 +86,10 @@ class TestServicepingScan(unittest.TestCase):
         self.assertEqual(result.host, 'yahoo.com')
         self.assertEqual(result.port, 443)
         self.assertIn(result.code, [200, 301])
+
+    def test_serviceping_pingresponse__str__(self):
+        result = ping('localhost', 65500)
+        self.assertIn('ip=localhost(127.0.0.1):port=65500:responding=False:data_mismatch=False:timeout=False:duration=', str(result))
 
 
 if __name__ == '__main__':
