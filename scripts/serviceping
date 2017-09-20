@@ -17,6 +17,7 @@ import time
 
 from serviceping import calc_deviation
 from serviceping.commandline import parse_arguments
+from serviceping.network import scan, ping
 
 try:
     from urllib.parse import urlparse
@@ -65,63 +66,6 @@ def exit_statistics():
     )
 
 
-def scan(host, port=80, url=None, https=False):
-    """
-    Run a scan of a host/port
-    @param host:
-    @param port:
-    @param url:
-    @param https:
-    @return:
-    """
-    global TIMEOUT
-    starts = {}
-    ends = {}
-    durations = {}
-    code = 0
-    length = 0
-    if url:
-        TIMEOUT = 1
-    port = int(port)
-    starts['all'] = starts['dns'] = datetime.datetime.now()
-    try:
-        host = socket.gethostbyname(host)
-        ends['dns'] = datetime.datetime.now()
-    except socket.gaierror:
-        return host, \
-            0, \
-            'DNS Lookup failed', \
-            datetime.datetime.now() - starts['dns']
-    starts['connect'] = datetime.datetime.now()
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(TIMEOUT)
-    result = s.connect_ex((host, port))
-    ends['connect'] = datetime.datetime.now()
-    if https:
-        starts['ssl'] = datetime.datetime.now()
-        s = ssl.wrap_socket(s)
-        ends['ssl'] = datetime.datetime.now()
-    if result == 0 and url:
-        # s.sendall('get %s' % url)
-        starts['request'] = datetime.datetime.now()
-        s.send("GET {0} HTTP/1.0\r\nHost: {1}\r\n\r\n".format(url, host).encode('ascii'))
-        data = s.recv(1500).decode('ascii')
-        length = len(data)
-        try:
-            code = data.split('\n')[0].split()[1]
-        except IndexError:
-            code = 0
-        ends['request'] = datetime.datetime.now()
-    s.close()
-    ends['all'] = datetime.datetime.now()
-    for d in starts.keys():
-        if d in ends.keys():
-            durations[d] = ends[d] - starts[d]
-    if result == 0:
-        return host, port, 'Open', code, durations, length
-    return host, port, 'Closed', code, durations, length
-
-
 if __name__ == '__main__':
     (options, command_args) = parse_arguments()
 
@@ -144,7 +88,7 @@ if __name__ == '__main__':
         args = command_args[0].split(':')
         hostname = args[0]
         try:
-            port = args[1]
+            port = int(args[1])
         except IndexError:
             port = 80
         try:
@@ -162,7 +106,7 @@ if __name__ == '__main__':
     except socket.gaierror:
         print('serviceping: unknown host %s' % hostname, file=sys.stderr)
         sys.exit(1)
-    print('SERVICEPING %s:%s (%s:%s).' % (hostname, port, ip, port))
+    print('SERVICEPING %s:%d (%s:%d).' % (hostname, port, ip, port))
     while True:
         try:
             ip = socket.gethostbyname(hostname)
@@ -171,50 +115,45 @@ if __name__ == '__main__':
             sys.exit(1)
 
         try:
-            ip, port, state, code, durations, length = scan(
-                hostname, port, url, https)
+            ping_response = ping(host=hostname, port=port, url=url, https=https)
             count_sent += 1
-            if state.lower() in ['open']:
+            if ping_response.responding:
                 count_received += 1
-                if durations['all'] > max_time:
-                    max_time = durations['all']
-                if min_time == datetime.timedelta(0) or durations['all'] < \
-                        min_time:
-                    min_time = durations['all']
-                times.append(
-                    durations['all'].seconds * 1000 
-                    + float(durations['all'].microseconds)
-                )
+                if ping_response.durations['all'] > max_time:
+                    max_time = ping_response.durations['all']
+                if min_time == datetime.timedelta(0) or ping_response.durations['all'] < min_time:
+                    min_time = ping_response.durations['all']
+                times.append(ping_response.durations['all'].seconds * 1000 + float(ping_response.durations['all'].microseconds))
                 avg_time = sum(times) / float(len(times))
                 deviation = calc_deviation(times, avg_time)
                 if len(times) > 100:
                     times = times[-100:]
                 if url:
-                    code_string = 'response=%s' % code
+                    code_string = 'response=%s' % ping_response.code
                 else:
                     code_string = ''
                 if options.timings:
                     print(
                         '%sfrom %s:%s (%s:%s):%s' % (
-                            '%d bytes ' % length if length else '',
+                            '%d bytes ' % ping_response.length if ping_response.length else '',
                             hostname, port, ip, port, code_string),
                         end=" "
                     )
                     for d in ['dns', 'connect', 'ssl', 'request', 'all']:
-                        if d in durations.keys():
+                        if d in ping_response.durations.keys():
                             print('%s=%.2fms' % (
                                 d,
-                                durations[d].seconds * 1000
-                                + float(durations[d].microseconds) / 1000
+                                ping_response.durations[d].seconds * 1000
+                                + float(ping_response.durations[d].microseconds) / 1000
                             ), end=" ")
                 else:
                     print(
                         '%sfrom %s:%s (%s:%s):%s time=%.2f ms' % (
-                            '%d bytes ' % length if length else '',
+                            '%d bytes ' % ping_response.length if ping_response.length else '',
                             hostname, port, ip, port, code_string,
                             float(
-                                durations['all'].seconds * 1000
-                                + durations['all'].microseconds
+                                ping_response.durations['all'].seconds * 1000
+                                + ping_response.durations['all'].microseconds
                             ) / 1000
                         ),
                         end=" ")

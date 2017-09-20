@@ -80,6 +80,7 @@ __pycache__/
 *.py[cod]
 
 package_metadata.json
+/.coverage
 /serviceping/package_metadata.json
 cobertura.xml
 nosetests.xml
