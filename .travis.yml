@@ -15,6 +15,7 @@ matrix:
       - TOX_ENV=build_docs
 install:
   - sudo apt-get update -qq
+  - sudo apt-get install -y python3.5
   - pip install --upgrade pip setuptools tox virtualenv coveralls
 script:
   - tox -v -v -e $TOX_ENV
