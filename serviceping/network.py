@@ -2,11 +2,11 @@
 Network port scan functions
 """
 from __future__ import print_function
+import datetime
 import socket
 import ssl
 import struct
 import sys
-import time
 from collections import OrderedDict
 
 
@@ -17,7 +17,7 @@ class ScanFailed(Exception):
     pass
 
 
-def scan(host, port=80, url=None, https=False, timeout=1):
+def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
     """
     Scan a network port
 
@@ -62,46 +62,52 @@ def scan(host, port=80, url=None, https=False, timeout=1):
         timeout = 1
         result['code'] = None
 
-    starts['all'] = starts['dns'] = time.time()
+    starts['all'] = starts['dns'] = datetime.datetime.now()
 
     # DNS Lookup
     try:
-        host = socket.gethostbyname(host)
-        ends['dns'] = time.time()
+        hostip = socket.gethostbyname(host)
+        result['ip'] = hostip
+        ends['dns'] = datetime.datetime.now()
     except socket.gaierror:
         raise ScanFailed('DNS Lookup failed')
 
     # TCP Connect
-    starts['connect'] = time.time()
+    starts['connect'] = datetime.datetime.now()
     network_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     network_socket.settimeout(timeout)
-    result_connection = network_socket.connect_ex((host, port))
-    ends['connect'] = time.time()
+    result_connection = network_socket.connect_ex((hostip, port))
+    ends['connect'] = datetime.datetime.now()
 
     # SSL
     if https:
-        starts['ssl'] = time.time()
+        starts['ssl'] = datetime.datetime.now()
         network_socket = ssl.wrap_socket(network_socket)
-        ends['ssl'] = time.time()
+        ends['ssl'] = datetime.datetime.now()
 
     # Get request
     if result_connection == 0 and url:
-        starts['request'] = time.time()
+        starts['request'] = datetime.datetime.now()
         network_socket.send(
             "GET {0} HTTP/1.0\r\nHost: {1}\r\n\r\n".format(
                 url, host
             ).encode('ascii'))
-        data = network_socket.recv(1500).decode('ascii')
+        if max_size:
+            data = network_socket.recv(max_size)
+        else:
+            data = network_socket.recv()
         result['length'] = len(data)
+        data = data.decode('ascii', errors='ignore')
+        result['response'] = (data)
         try:
             result['code'] = int(data.split('\n')[0].split()[1])
         except IndexError:
             pass
-        ends['request'] = time.time()
+        ends['request'] = datetime.datetime.now()
     network_socket.close()
 
     # Calculate durations
-    ends['all'] = time.time()
+    ends['all'] = datetime.datetime.now()
     for duration in starts.keys():
         if duration in ends.keys():
             result['durations'][duration] = ends[duration] - starts[duration]
@@ -141,6 +147,7 @@ class PingResponse(object):
         The duration of the ping operation
     """
     host = None
+    ip = None
     port = 0
     responding = False
     data_mismatch = False
@@ -148,6 +155,7 @@ class PingResponse(object):
     start = 0.0
     end = 0.0
     duration = None
+    response = None
 
     def __init__(self, host=None, port=6666):
         self.host = host
@@ -155,14 +163,16 @@ class PingResponse(object):
         self.start_timer()
 
     def start_timer(self):
-        self.start = time.time()
+        self.start = datetime.datetime.now()
         self.end = None
 
     def stop_timer(self):
-        self.end = time.time()
+        self.end = datetime.datetime.now()
 
     def __str__(self):
-        return ':'.join([self.host, str(self.port), str(self.responding), str(self.data_mismatch), str(self.timeout), str(self.duration)])
+        return 'ip=%s(%s):port=%s:responding=%s:data_mismatch=%s:timeout=%s:duration=%s' % (
+            self.host, self.ip, str(self.port), str(self.responding), str(self.data_mismatch), str(self.timeout), str(self.duration)
+        )
 
     @property
     def duration(self):
@@ -172,6 +182,52 @@ class PingResponse(object):
         if not self.end:
             return None
         return self.end - self.start
+
+
+def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535):
+    """
+    Ping a host
+
+    Parameters
+    ----------
+    host: str
+        The host or ip address to ping
+
+    port: int, optional
+        The port to ping, default=80
+
+    url: str, optional
+        URL to ping, will do a host/port ping if not provided
+
+    https: bool, optional
+        Connect via ssl, default=False
+
+    timeout: int, optional
+        Number of seconds to wait for a response before timing out, default=1 second
+
+    max_size: int, optional
+        The max size of response that can be retrieved.  This should be a power of 2
+        default=65535.
+
+    Returns
+    -------
+    PingResponse:
+        The ping response object
+    """
+    result = scan(host=host, port=port, url=url, https=https, timeout=timeout, max_size=max_size)
+    result_obj = PingResponse(host=host, port=port)
+    result_obj.durations = result.get('durations', None)
+    result_obj.code = result.get('code', None)
+    result_obj.state = result.get('state', 'unknown')
+    result_obj.length = result.get('length', 0)
+    result_obj.ip = result.get('ip', None)
+    result_obj.response = result.get('response', None)
+    if result_obj.state in ['open']:
+        result_obj.responding = True
+    if result_obj.durations:
+        result_obj.start = datetime.datetime.now()
+        result_obj.end = result_obj.start + result_obj.durations.get('all', datetime.timedelta(0))
+    return result_obj
 
 
 def ping_udp(host, port=6666, size=100, timeout=1):
@@ -207,8 +263,7 @@ def ping_udp(host, port=6666, size=100, timeout=1):
     ScanFailed - The scan operation failed
     """
     # Create a udp socket with a timeout, if a timeout is specified
-    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    udp_socket.bind(('', 6667,))
+    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_UDP)
     if timeout:
         udp_socket.settimeout(timeout)
 
@@ -220,12 +275,14 @@ def ping_udp(host, port=6666, size=100, timeout=1):
 
     # Data for the packet to send
     packet_data = b'x' * size
+    checksum = 0
+    packet_header = struct.pack('!HHHH', 6667, port, 8+len(packet_data), checksum)
 
     # Time a ping
     ping_result = PingResponse(host=host, port=port)
 
     # Send the ping
-    udp_socket.sendto(packet_data, (host, port))
+    udp_socket.sendto(packet_header + packet_data, (host, port))
 
     # Wait for the response'
     try:
@@ -245,4 +302,4 @@ if __name__ == '__main__':
     host = 'localhost'
     if len(sys.argv) > 1:
         host = sys.argv[-1]
-    print(ping_udp('8.8.8.8', 53))
+    print(ping(host, 8888))
