@@ -14,6 +14,10 @@ import unittest
 # when the the class is run (by calling unittest.main()
 class TestServicepingScan(unittest.TestCase):
 
+    def test_serviceping_scan_invalid_hostname(self):
+        with self.assertRaises(ScanFailed):
+            scan('pythonpython.python')
+
     def test_serviceping_scan_closed(self):
         result = scan('localhost', port=65500)
         self.assertEqual(result['state'], 'closed')
