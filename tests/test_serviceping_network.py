@@ -6,7 +6,7 @@
 test serviceping network scan
 """
 from __future__ import print_function
-from serviceping.network import scan, ScanFailed
+from serviceping.network import scan, ScanFailed, ping, PingResponse
 import unittest
 
 
@@ -40,6 +40,42 @@ class TestServicepingScan(unittest.TestCase):
         self.assertEqual(result['host'], 'yahoo.com')
         self.assertEqual(result['port'], 443)
         self.assertIn(result['code'], [200, 301])
+
+    def test_serviceping_ping_closed(self):
+        result = ping('localhost', port=65500)
+        self.assertIsInstance(result, PingResponse)
+        self.assertIsInstance(result, PingResponse)
+        self.assertFalse(result.responding)
+        self.assertEqual(result.state, 'closed')
+        self.assertEqual(result.host, 'localhost')
+        self.assertEqual(result.port, 65500)
+
+    def test_serviceping_ping_open_http(self):
+        result = ping('yahoo.com', port=80)
+        self.assertIsInstance(result, PingResponse)
+        self.assertTrue(result.responding)
+        self.assertEqual(result.state, 'open')
+        self.assertEqual(result.host, 'yahoo.com')
+        self.assertEqual(result.port, 80)
+
+    def test_serviceping_ping_open_https(self):
+        result = ping('yahoo.com', port=443, https=True)
+        self.assertIsInstance(result, PingResponse)
+        self.assertTrue(result.responding)
+        self.assertEqual(result.state, 'open')
+        self.assertEqual(result.host, 'yahoo.com')
+        self.assertEqual(result.port, 443)
+
+    def test_serviceping_ping_open_https_url(self):
+        result = ping(
+            'yahoo.com', port=443, https=True, url='https://yahoo.com/'
+        )
+        self.assertIsInstance(result, PingResponse)
+        self.assertTrue(result.responding)
+        self.assertEqual(result.state, 'open')
+        self.assertEqual(result.host, 'yahoo.com')
+        self.assertEqual(result.port, 443)
+        self.assertIn(result.code, [200, 301])
 
 
 if __name__ == '__main__':
