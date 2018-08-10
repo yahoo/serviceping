@@ -86,3 +86,5 @@ cobertura.xml
 nosetests.xml
 
 /.tox
+/.idea
+/venv

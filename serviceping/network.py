@@ -14,7 +14,12 @@ class ScanFailed(Exception):
     """
     The scan operation encountered a failure
     """
-    pass
+    def __init__(self, *args, **kwargs):
+        try:
+            self.result = kwargs.pop('result')
+        except KeyError:
+            result = {}
+        super().__init__(*args, **kwargs)
 
 
 def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
@@ -70,7 +75,7 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
         result['ip'] = hostip
         ends['dns'] = datetime.datetime.now()
     except socket.gaierror:
-        raise ScanFailed('DNS Lookup failed')
+        raise ScanFailed('DNS Lookup failed', result=result)
 
     # TCP Connect
     starts['connect'] = datetime.datetime.now()
@@ -82,7 +87,10 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
     # SSL
     if https:
         starts['ssl'] = datetime.datetime.now()
-        network_socket = ssl.wrap_socket(network_socket)
+        try:
+            network_socket = ssl.wrap_socket(network_socket)
+        except socket.timeout:
+            raise ScanFailed('SSL socket timeout', result=result)
         ends['ssl'] = datetime.datetime.now()
 
     # Get request
@@ -146,20 +154,30 @@ class PingResponse(object):
     duration: float
         The duration of the ping operation
     """
-    host = None
-    ip = None
-    port = 0
-    responding = False
-    data_mismatch = False
-    timeout = False
-    start = 0.0
-    end = 0.0
-    duration = None
-    response = None
-
-    def __init__(self, host=None, port=6666):
+    def __init__(
+            self, host=None, port=0, ip=None, responding=False, data_mismatch=False, timeout=False, code=None,
+            state=None, length=0, start=None, end=None, error=False, error_message=None, durations=None, response=None,
+            sequence=0
+    ):
         self.host = host
         self.port = int(port)
+        self.ip = ip
+        self.responding = responding
+        self.data_mismatch = data_mismatch
+        self.timeout = timeout
+        self.code = code
+        self.state = state
+        self.length = length
+        self.durations = durations
+        self.sequence = sequence
+        if start:
+            self.start = start
+        else:
+            self.start = datetime.datetime.now()
+        self.end = end
+        self.error = error
+        self.error_message = error_message
+        self.response = response
         self.start_timer()
 
     def start_timer(self):
@@ -169,10 +187,18 @@ class PingResponse(object):
     def stop_timer(self):
         self.end = datetime.datetime.now()
 
+    def __repr__(self):
+        return f'PingResponse(host={self.host!r}, port={self.port!r}, ip={self.ip!r}, sequence={self.sequence!r}, ' \
+               f'responding={self.responding!r}, data_mismatch={self.data_mismatch!r}, timeout={self.timeout!r}, ' \
+               f'code={self.code!r}, state={self.state!r}, length={self.length!r}, start={self.start!r}, ' \
+               f'end={self.end!r}, error={self.error!r}, error_message={self.error_message!r}, ' \
+               f'durations={self.durations!r}, response={self.response!r})'
+
     def __str__(self):
-        return 'ip=%s(%s):port=%s:responding=%s:data_mismatch=%s:timeout=%s:duration=%s' % (
-            self.host, self.ip, str(self.port), str(self.responding), str(self.data_mismatch), str(self.timeout), str(self.duration)
-        )
+        return f'ip={self.host}({self.ip}):port={self.port}:responding={self.responding}' \
+               f'{":error="+str(self.error)+":error_message="+repr(self.error_message) if self.error else ""}' \
+               f':data_mismatch={self.data_mismatch}' \
+               f':timeout={self.timeout}:duration={self.duration}'
 
     @property
     def duration(self):
@@ -184,7 +210,7 @@ class PingResponse(object):
         return self.end - self.start
 
 
-def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535):
+def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535, sequence=0):
     """
     Ping a host
 
@@ -209,24 +235,33 @@ def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535):
         The max size of response that can be retrieved.  This should be a power of 2
         default=65535.
 
+    sequence: int, optional
+        Sequence number for the ping request
+
     Returns
     -------
     PingResponse:
         The ping response object
     """
-    result = scan(host=host, port=port, url=url, https=https, timeout=timeout, max_size=max_size)
-    result_obj = PingResponse(host=host, port=port)
-    result_obj.durations = result.get('durations', None)
-    result_obj.code = result.get('code', None)
-    result_obj.state = result.get('state', 'unknown')
-    result_obj.length = result.get('length', 0)
-    result_obj.ip = result.get('ip', None)
-    result_obj.response = result.get('response', None)
-    if result_obj.state in ['open']:
-        result_obj.responding = True
-    if result_obj.durations:
-        result_obj.start = datetime.datetime.now()
-        result_obj.end = result_obj.start + result_obj.durations.get('all', datetime.timedelta(0))
+    try:
+        result = scan(host=host, port=port, url=url, https=https, timeout=timeout, max_size=max_size)
+    except ScanFailed as failure:
+        result = failure.result
+        result['error'] = True
+        result['error_message'] = str(failure)
+    result_obj = PingResponse(
+        host=host, port=port, ip=result.get('ip', None), sequence=sequence,
+        durations=result.get('durations', None),
+        code=result.get('code', None),
+        state=result.get('state', 'unknown'),
+        length=result.get('length', 0),
+        response=result.get('response', None),
+        error=result.get('error', False),
+        error_message=result.get('error_message', None),
+        responding=True if result.get('state', 'unknown') in ['open'] else False,
+        start=datetime.datetime.now(),
+        end=datetime.datetime.now() + result['durations'].get('all', datetime.timedelta(0)) if result.get('durations', None) else None
+    )
     return result_obj
 
 
