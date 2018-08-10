@@ -17,6 +17,14 @@ matrix:
     - env:
       - TOX_ENV=build_docs
 
+install:
+  - pip install --upgrade pip
+  - pip install --upgrade setuptools
+  - pip install --upgrade tox
+
+script:
+  - tox
+
 after_success:
   coveralls
 
