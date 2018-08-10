@@ -5,13 +5,11 @@ matrix:
   include:
     - python: 3.6
       env: TOXENV=py36
-    - python: 3.7
-      env: TOXENV=py37
-    - python: 3.7
+    - python: 3.6
       env: TOXENV=build_docs
-    - python: 3.7
+    - python: 3.6
       env: TOXENV=pycodestyle
-    - python: 3.7
+    - python: 3.6
       env: TOXENV=pylint
   allow_failures:
     - env:
