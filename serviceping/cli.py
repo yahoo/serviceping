@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2013-2015, Yahoo Inc.
 # Copyrights licensed under the Apache 2.0 License
 # See the accompanying LICENSE.txt file for terms.
@@ -7,55 +6,35 @@
 Command line utility providing a ping like interface for pinging tcp/ssl
 services.
 """
-from __future__ import print_function
-import argparse
 import datetime
 import socket
-import ssl
 import sys
 import time
+from urllib.parse import urlparse
 
-from serviceping import calc_deviation
-from serviceping.commandline import parse_arguments
-from serviceping.network import scan, ping
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from .commandline import parse_arguments
+from .serviceping import calc_deviation
+from .network import scan, ping
 
 
 TIMEOUT = 10  # Set a reasonable timeout value
 
 
-def exit_statistics():
+def exit_statistics(hostname, start_time, count_sent, count_received, min_time, avg_time, max_time, deviation):
     """
     Print ping exit statistics
     """
     end_time = datetime.datetime.now()
-    print('\b\b--- %s ping statistics ---' % hostname)
     duration = end_time - start_time
     duration_sec = float(duration.seconds * 1000)
     duration_ms = float(duration.microseconds / 1000)
     duration = duration_sec + duration_ms
+    package_loss = 100 - ((float(count_received) / float(count_sent)) * 100)
+    print(f'\b\b--- {hostname} ping statistics ---')
     try:
-        print(
-            '%d packets transmitted, %d received, %d%% packet loss, '
-            'time %sms' % (
-                count_sent,
-                count_received,
-                100 - ((float(count_received) / float(count_sent)) * 100),
-                duration)
-        )
+        print(f'{count_sent} packages transmitted, {count_received} received, {package_loss}% package loss, time {duration}ms')
     except ZeroDivisionError:
-        print(
-            '%d packets transmitted, %d received, %d%% packet loss, '
-            'time %sms' % (
-                count_sent,
-                count_received,
-                100,
-                duration)
-        )
+        print(f'{count_sent} packets transmitted, {count_received} received, 100% packet loss, time {duration}ms')
     print(
         'rtt min/avg/max/dev = %.2f/%.2f/%.2f/%.2f ms' % (
             min_time.seconds*1000 + float(min_time.microseconds)/1000,
@@ -66,13 +45,12 @@ def exit_statistics():
     )
 
 
-if __name__ == '__main__':
+def main():
     (options, command_args) = parse_arguments()
 
     rc = 1
     https = False
-    if command_args[0].startswith('http:') or \
-            command_args[0].startswith('https:'):
+    if command_args[0].startswith('http:') or command_args[0].startswith('https:'):
         urlp = urlparse(command_args[0])
         hostname = urlp.hostname
         port = urlp.port
@@ -105,17 +83,17 @@ if __name__ == '__main__':
         ip = socket.gethostbyname(hostname)
     except socket.gaierror:
         print('serviceping: unknown host %s' % hostname, file=sys.stderr)
-        sys.exit(1)
+        return 1
     print('SERVICEPING %s:%d (%s:%d).' % (hostname, port, ip, port))
     while True:
         try:
             ip = socket.gethostbyname(hostname)
         except socket.gaierror:
             print('serviceping: unknown host %s' % hostname, file=sys.stderr)
-            sys.exit(1)
+            return 1
 
         try:
-            ping_response = ping(host=hostname, port=port, url=url, https=https)
+            ping_response = ping(host=hostname, port=port, url=url, https=https, sequence=count_sent)
             count_sent += 1
             if ping_response.responding:
                 count_received += 1
@@ -160,11 +138,17 @@ if __name__ == '__main__':
                 print()
                 rc = 0
             else:
+                if ping_response.error and ping_response.error_message:
+                    print(f'{ping_response.error_message} for seq {ping_response.sequence}')
                 rc = 1
             if options.count and options.count == count_sent:
-                exit_statistics()
-                sys.exit(rc)
+                exit_statistics(hostname, start_time, count_sent, count_received, min_time, avg_time, max_time, deviation)
+                return rc
             time.sleep(options.interval)
         except KeyboardInterrupt:
-            exit_statistics()
-            sys.exit(rc)
+            exit_statistics(hostname, start_time, count_sent, count_received, min_time, avg_time, max_time, deviation)
+            return rc
+
+
+if __name__ == '__main__':
+    sys.exit(main())

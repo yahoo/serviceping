@@ -24,23 +24,18 @@ Build Status
 Installation
 ============
 
-To install serviceping, simply:
+To install serviceping, first make sure you are running Python 3.6+,
+then simply:
 
 .. code-block::
 
     $ pip install serviceping
 
-or using easy_install:
-
-.. code-block::
-
-    $ easy_install serviceping
-
 or from source:
 
 .. code-block::
 
-    $ python setup.py install
+    $ pip install .
 
 
 Usage
