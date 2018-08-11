@@ -20,24 +20,5 @@ if not setuptools_version_supported():
     sys.exit(1)
 
 
-setuptools.setup(
-    license='Apache',
-    classifiers=[
-            'License :: OSI Approved :: Apache Software License',
-            'Development Status :: 4 - Beta',
-            'Environment :: Console',
-            'Intended Audience :: Developers',
-            'Operating System :: MacOS :: MacOS X',
-            'Operating System :: POSIX :: BSD :: FreeBSD',
-            'Operating System :: POSIX :: Linux',
-            'Operating System :: POSIX :: SunOS/Solaris',
-            'Operating System :: POSIX',
-            'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.7',
-            'Programming Language :: Python :: Implementation :: CPython',
-            'Topic :: System :: Systems Administration',
-            'Topic :: Utilities',
-    ],
-    python_requires=">=3.6",
-)
+setuptools.setup()
 
