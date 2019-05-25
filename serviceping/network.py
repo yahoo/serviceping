@@ -88,7 +88,7 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
     if https:
         starts['ssl'] = datetime.datetime.now()
         try:
-            network_socket = ssl.wrap_socket(network_socket)
+            network_socket = ssl.wrap_socket(network_socket)  # nosec
         except socket.timeout:
             raise ScanFailed('SSL socket timeout', result=result)
         ends['ssl'] = datetime.datetime.now()
