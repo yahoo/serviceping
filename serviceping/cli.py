@@ -33,7 +33,7 @@ def exit_statistics(hostname, start_time, count_sent, count_received, min_time, 
     print(f'\b\b--- {hostname} ping statistics ---')
     try:
         print(f'{count_sent} packages transmitted, {count_received} received, {package_loss}% package loss, time {duration}ms')
-    except ZeroDivisionError:
+    except ZeroDivisionError:  # pragma: no cover
         print(f'{count_sent} packets transmitted, {count_received} received, 100% packet loss, time {duration}ms')
     print(
         'rtt min/avg/max/dev = %.2f/%.2f/%.2f/%.2f ms' % (
@@ -145,10 +145,10 @@ def main():
                 exit_statistics(hostname, start_time, count_sent, count_received, min_time, avg_time, max_time, deviation)
                 return rc
             time.sleep(options.interval)
-        except KeyboardInterrupt:
+        except KeyboardInterrupt:  # pragma: no cover
             exit_statistics(hostname, start_time, count_sent, count_received, min_time, avg_time, max_time, deviation)
             return rc
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     sys.exit(main())
