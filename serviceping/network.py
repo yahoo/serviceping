@@ -9,6 +9,7 @@ import struct
 import sys
 from collections import OrderedDict
 
+cipher = 'DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:ECDHE-ECDSA-AES128-GCM-SHA256'
 
 class ScanFailed(Exception):
     """
@@ -88,7 +89,9 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
     if https:
         starts['ssl'] = datetime.datetime.now()
         try:
-            network_socket = ssl.wrap_socket(network_socket)  # nosec
+            context = ssl.create_default_context()
+            context.set_ciphers(cipher)
+            network_socket = context.wrap_socket(network_socket, server_hostname=host)  # nosec
         except socket.timeout:
             raise ScanFailed('SSL socket timeout', result=result)
         ends['ssl'] = datetime.datetime.now()
