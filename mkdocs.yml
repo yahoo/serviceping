@@ -28,6 +28,7 @@ markdown_extensions:
 
 nav:
     - Quickstart: index.md
+    - Code Documentation: sphinxindex.html
 
 plugins:
     - search
