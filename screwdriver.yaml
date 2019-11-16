@@ -50,9 +50,9 @@ jobs:
         PYPI_INDEX_URL: https://test.pypi.org/simple
     requires: [publish_test_pypi]
 
-    publish_documentation:
-      template: python/documentation
-      requires: [verify_test_package]
+  publish_documentation:
+    template: python/documentation
+    requires: [verify_test_package]
 
   publish_pypi:
     template: python/package_python
