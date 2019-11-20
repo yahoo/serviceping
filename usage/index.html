@@ -33,21 +33,21 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      <link rel="shortcut icon" href="/assets/images/favicon.png">
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
     
     
       
-        <title>Serviceping</title>
+        <title>Usage - Serviceping</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
       
       
     
     
-      <script src="/assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
@@ -56,7 +56,7 @@
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
-    <link rel="stylesheet" href="/assets/fonts/material-icons.css">
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
     
     
     
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="/." title="Serviceping" class="md-header-nav__button md-logo">
+        <a href=".." title="Serviceping" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -101,7 +101,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                
+                Usage
               
             </span>
           
@@ -176,7 +176,7 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="/." title="Serviceping" class="md-nav__button md-logo">
+    <a href=".." title="Serviceping" class="md-nav__button md-logo">
       
         <i class="md-icon"></i>
       
@@ -212,7 +212,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/install/" title="Install" class="md-nav__link">
+    <a href="../install/" title="Install" class="md-nav__link">
       Install
     </a>
   </li>
@@ -222,11 +222,18 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="/usage/" title="Usage" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="Usage" class="md-nav__link md-nav__link--active">
       Usage
     </a>
+    
   </li>
 
     
@@ -236,7 +243,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/examples/" title="Examples" class="md-nav__link">
+    <a href="../examples/" title="Examples" class="md-nav__link">
       Examples
     </a>
   </li>
@@ -267,7 +274,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/sphinxindex.html" title="Code Documentation" class="md-nav__link">
+    <a href="../sphinxindex.html" title="Code Documentation" class="md-nav__link">
       Code Documentation
     </a>
   </li>
@@ -284,7 +291,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/license.txt" title="License" class="md-nav__link">
+    <a href="../license.txt" title="License" class="md-nav__link">
       License
     </a>
   </li>
@@ -301,8 +308,37 @@
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
-  <h1>404 - Not found</h1>
+                
+                  <a href="https://github.com/yahoo/serviceping/edit/master/docs/usage.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Usage</h1>
+                
+                <p>Serviceping provides a command line interface that operates like the 
+<a href="https://linux.die.net/man/8/ping">ping</a> command  but instead of using icmp packets to check 
+for a response from a host.  It can perform a  tcp network connection to a port on a host or 
+a http or https get request to check a url on a host.</p>
+<p>Since tcp and http requests require multiple operations.  Each request performs all of
+the operations end to end for each request.  The serviceping command adds a 
+<code class="codehilite"><span class="o">-</span><span class="n">d</span></code> flag that will show timings for the different stages the ping request.</p>
+<div class="admonition note">
+<p class="admonition-title">The serviceping command line usage information"</p>
+<div class="codehilite"><pre><span></span><span class="nv">usage</span>: <span class="nv">serviceping</span> [<span class="o">-</span><span class="nv">h</span>] [<span class="o">-</span><span class="nv">c</span> <span class="nv">COUNT</span>] [<span class="o">-</span><span class="nv">i</span> <span class="nv">INTERVAL</span>] [<span class="o">-</span><span class="nv">d</span>] <span class="nv">destination</span> [<span class="nv">destination</span> ...]
+<span class="nv">positional</span> <span class="nv">arguments</span>:
+  <span class="nv">destination</span> <span class="nv">Destination</span> <span class="nv">host</span> <span class="nv">or</span> <span class="nv">URL</span>
 
+<span class="nv">optional</span> <span class="nv">arguments</span>:
+  <span class="o">-</span><span class="nv">h</span>, <span class="o">--</span><span class="nv">help</span>   <span class="k">show</span> <span class="nv">this</span> <span class="nv">help</span> <span class="nv">message</span> <span class="nv">and</span> <span class="k">exit</span>
+  <span class="o">-</span><span class="nv">c</span> <span class="nv">COUNT</span>     <span class="nv">Number</span> <span class="nv">of</span> <span class="nv">pings</span> <span class="nv">to</span> <span class="k">send</span>
+  <span class="o">-</span><span class="nv">i</span> <span class="nv">INTERVAL</span>  <span class="nv">Ping</span> <span class="nv">interval</span>
+  <span class="o">-</span><span class="nv">d</span>           <span class="k">Show</span> <span class="nv">timings</span> <span class="k">for</span> <span class="nv">the</span> <span class="nv">entire</span> <span class="nv">connection</span>
+</pre></div>
+
+</div>
+                
+                  
+                
+              
               
                 
 
@@ -315,6 +351,41 @@
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../install/" title="Install" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Install
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../examples/" title="Examples" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Examples
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -333,9 +404,9 @@
       
     </div>
     
-      <script src="/assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"/"}})</script>
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       
     
   </body>
