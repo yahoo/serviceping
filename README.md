@@ -5,6 +5,7 @@
 [![Current Version](https://img.shields.io/pypi/v/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
 [![Supported Python Versions](https://img.shields.io/badge/python-3.6,3.7,3.8-blue.svg)](https://pypi.python.org/pypi/serviceping/)
 [![License](https://img.shields.io/pypi/l/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
+[![Documentation](https://img.shields.io/badge/Documentation-latest-blue.svg)](https://yahoo.github.io/serviceping/)
 
 A utility with a "ping" like interface to ping tcp port services.
 
@@ -13,8 +14,7 @@ A utility with a "ping" like interface to ping tcp port services.
 - [Background](#background)
 - [Install](#install)
 - [Usage](#usage)
-- [Examples](#examples)
-- [Contribute](#contribute)
+- [Examples](https://yahoo.github.io/serviceping/examples/)
 - [License](#license)
 
 ## Background
@@ -26,21 +26,31 @@ This utility was written to simplify troubleshooting network issues related to t
 To install serviceping, first make sure you are running Python 3.6+, then simply:
 
 ```
-pip install serviceping
+pip3 install serviceping
 ```
 
 ## Usage
 
-    usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-d] destination [destination ...]
-    positional arguments:
-      destination Destination host or URL
+Serviceping provides a command line interface that operates like the [ping]() command 
+but instead of using icmp packets to check for a response from a host.  It can perform a 
+tcp network connection to a port on a host or a http or https get request to check a url 
+on a host.
 
-    optional arguments:
-      -h, --help   show this help message and exit
-      -c COUNT     Number of pings to send
-      -i INTERVAL  Ping interval
-      -d           Show timings for the entire connection
+Since tcp and http requests require multiple operations.  Each request performs all of
+the operations end to end for the request.  The serviceping command adds a 
+`-d` flag that will show timings for the different stages the ping request.
 
+```
+usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-d] destination [destination ...]
+positional arguments:
+  destination Destination host or URL
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -c COUNT     Number of pings to send
+  -i INTERVAL  Ping interval
+  -d           Show timings for the entire connection
+```
 
 ## Examples
 
@@ -122,7 +132,7 @@ rtt min/avg/max/dev = 156.69/212.76/327.43/138.24 ms
 $
 ```
 
-Clearly, the host with address 157.166.226.25 is taking significantly longer 
+Clearly, the host with address 157.166.255.18 is taking significantly longer 
 to establish the tcp connection and handle the http request.
 
 ## License
