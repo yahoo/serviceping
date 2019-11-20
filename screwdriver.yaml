@@ -51,6 +51,8 @@ jobs:
       PACKAGE_TAG: False
       PUBLISH: True
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+    steps:
+      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
     requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security,  generate_version]
 
   verify_test_package:
@@ -67,4 +69,6 @@ jobs:
     template: python/package_python
     environment:
       PUBLISH: True
+    steps:
+      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
     requires: [verify_test_package]
