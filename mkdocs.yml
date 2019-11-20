@@ -8,9 +8,8 @@ extra_css: []
 markdown_extensions:
     - admonition
     - codehilite
-    - toc:
-        permalink: true
-        toc_depth: 4
+    - markdown_include.include:
+        base_path: docs
     - pymdownx.arithmatex
     - pymdownx.betterem:
         smart_enable: all
@@ -25,10 +24,17 @@ markdown_extensions:
     - pymdownx.tasklist:
         custom_checkbox: true
     - pymdownx.tilde
+    - toc:
+        permalink: true
+        toc_depth: 4
 
 nav:
-    - Quickstart: index.md
-    - Code Documentation: sphinxindex.html
+    - Install: install.md
+    - Usage: usage.md
+    - Examples: examples.md
+    - Developer Resources:
+        - Code Documentation: sphinxindex.html
+    - License: license.txt
 
 plugins:
     - search

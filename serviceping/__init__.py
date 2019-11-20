@@ -23,8 +23,13 @@ else:
         'version': '0.0.0'
     }
 
-__version__ = str(__package_metadata__.get('version', '0.0.0'))
-__git_version__ = str(__package_metadata__.get('git_version', ''))
+try:
+    import pkg_resources
+    __version__ = pkg_resources.get_distribution("serviceping").version
+except ImportError:
+    __version__ = str(__package_metadata__.get('version', '0.0.0'))
+
+
 __ci_version__ = str(__package_metadata__.get('ci_version', ''))
 __ci_build_number__ = str(__package_metadata__.get('ci_build_number', ''))
 __git_branch__ = str(__package_metadata__.get('git_branch', ''))
@@ -34,3 +39,5 @@ __git_base_url__ = 'https://github.com/yahoo/serviceping'
 if __git_origin__.endswith('.git'):  # pragma: no cover
     __git_base_url__ = __git_origin__[:-4].strip('/')
 __source_url__ = __git_base_url__ + '/tree/' + __git_hash__
+
+__all__ = ['cli', 'commandline', 'network', 'serviceping']

@@ -88,3 +88,6 @@ nosetests.xml
 /.tox
 /.idea
 /venv
+/build
+/logs
+/documentation
