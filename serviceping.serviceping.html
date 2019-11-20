@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>serviceping.serviceping module &#8212; serviceping 19.11.159760 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="sphinxindex.html">serviceping 19.11.159760 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-serviceping.serviceping">
+<span id="serviceping-serviceping-module"></span><h1>serviceping.serviceping module<a class="headerlink" href="#module-serviceping.serviceping" title="Permalink to this headline">¶</a></h1>
+<p>ServicePing Utility functioins</p>
+<dl class="class">
+<dt id="serviceping.serviceping.StatsList">
+<em class="property">class </em><code class="sig-prename descclassname">serviceping.serviceping.</code><code class="sig-name descname">StatsList</code><span class="sig-paren">(</span><em class="sig-param">values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#StatsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.StatsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A list object that can do statistics on the values</p>
+<dl class="method">
+<dt id="serviceping.serviceping.StatsList.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#StatsList.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.StatsList.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a value to the stats list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The value to add</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="serviceping.serviceping.StatsList.count">
+<code class="sig-name descname">count</code><em class="property"> = 0</em><a class="headerlink" href="#serviceping.serviceping.StatsList.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="serviceping.serviceping.StatsList.mean">
+<code class="sig-name descname">mean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#StatsList.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.StatsList.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the mean of the elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The mean of the list elements</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="serviceping.serviceping.StatsList.new_m">
+<code class="sig-name descname">new_m</code><em class="property"> = 0</em><a class="headerlink" href="#serviceping.serviceping.StatsList.new_m" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="serviceping.serviceping.StatsList.new_s">
+<code class="sig-name descname">new_s</code><em class="property"> = 0</em><a class="headerlink" href="#serviceping.serviceping.StatsList.new_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="serviceping.serviceping.StatsList.old_m">
+<code class="sig-name descname">old_m</code><em class="property"> = 0</em><a class="headerlink" href="#serviceping.serviceping.StatsList.old_m" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="serviceping.serviceping.StatsList.old_s">
+<code class="sig-name descname">old_s</code><em class="property"> = 0</em><a class="headerlink" href="#serviceping.serviceping.StatsList.old_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="serviceping.serviceping.StatsList.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#StatsList.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.StatsList.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the counter</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="serviceping.serviceping.StatsList.standard_deviation">
+<code class="sig-name descname">standard_deviation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#StatsList.standard_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.StatsList.standard_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the standard deviation of the elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The standard deviation of the list elements</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="serviceping.serviceping.StatsList.variance">
+<code class="sig-name descname">variance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#StatsList.variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.StatsList.variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the variance of the elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The variance of the list elements</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="serviceping.serviceping.calc_deviation">
+<code class="sig-prename descclassname">serviceping.serviceping.</code><code class="sig-name descname">calc_deviation</code><span class="sig-paren">(</span><em class="sig-param">values</em>, <em class="sig-param">average</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#calc_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.calc_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the standard deviation of a list of values
+&#64;param values: list(float)
+&#64;param average:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="serviceping.serviceping.calc_deviation1">
+<code class="sig-prename descclassname">serviceping.serviceping.</code><code class="sig-name descname">calc_deviation1</code><span class="sig-paren">(</span><em class="sig-param">values</em>, <em class="sig-param">average</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/serviceping/serviceping.html#calc_deviation1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#serviceping.serviceping.calc_deviation1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the standard deviation of a list of values
+&#64;param values: list(float)
+&#64;param average:
+&#64;return:</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/serviceping.serviceping.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="sphinxindex.html">serviceping 19.11.159760 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Yahoo Inc..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
+    </div>
+  </body>
+</html>
