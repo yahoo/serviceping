@@ -1,0 +1,553 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Serviceping Network troubleshooting utility">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+    
+    
+      
+        <title>Serviceping</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/application.1b62728e.css">
+      
+      
+    
+    
+      <script src="assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#background" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="." title="Serviceping" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Serviceping
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Quickstart
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/yahoo/serviceping/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="." title="Serviceping" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Serviceping
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/yahoo/serviceping/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Quickstart
+      </label>
+    
+    <a href="." title="Quickstart" class="md-nav__link md-nav__link--active">
+      Quickstart
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    Install
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ping-port-80-http-on-wwwyahoocom" class="md-nav__link">
+    Ping port 80 (http) on www.yahoo.com
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ping-port-4443-https-on-wwwyahoocom" class="md-nav__link">
+    Ping port 4443 (https) on www.yahoo.com
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pinging-a-url-instead-of-the-port" class="md-nav__link">
+    Pinging a URL instead of the port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pinging-a-url-with-timings" class="md-nav__link">
+    Pinging a URL with timings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="sphinxindex.html" title="Code Documentation" class="md-nav__link">
+      Code Documentation
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#background" class="md-nav__link">
+    Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    Install
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ping-port-80-http-on-wwwyahoocom" class="md-nav__link">
+    Ping port 80 (http) on www.yahoo.com
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ping-port-4443-https-on-wwwyahoocom" class="md-nav__link">
+    Ping port 4443 (https) on www.yahoo.com
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pinging-a-url-instead-of-the-port" class="md-nav__link">
+    Pinging a URL instead of the port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pinging-a-url-with-timings" class="md-nav__link">
+    Pinging a URL with timings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/yahoo/serviceping/edit/master/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Quickstart</h1>
+                
+                <p>A utility with a "ping" like interface to ping tcp port services.</p>
+<h2 id="background">Background<a class="headerlink" href="#background" title="Permanent link">&para;</a></h2>
+<p>This utility was written to simplify troubleshooting network issues related to talking to 
+network services.</p>
+<h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
+<p>To install serviceping, first make sure you are running Python 3.6+, then simply:</p>
+<div class="codehilite"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">serviceping</span>
+</pre></div>
+
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<div class="codehilite"><pre><span></span><span class="nv">usage</span>: <span class="nv">serviceping</span> [<span class="o">-</span><span class="nv">h</span>] [<span class="o">-</span><span class="nv">c</span> <span class="nv">COUNT</span>] [<span class="o">-</span><span class="nv">i</span> <span class="nv">INTERVAL</span>] [<span class="o">-</span><span class="nv">d</span>] <span class="nv">destination</span> [<span class="nv">destination</span> ...]
+<span class="nv">positional</span> <span class="nv">arguments</span>:
+  <span class="nv">destination</span> <span class="nv">Destination</span> <span class="nv">host</span> <span class="nv">or</span> <span class="nv">URL</span>
+
+<span class="nv">optional</span> <span class="nv">arguments</span>:
+  <span class="o">-</span><span class="nv">h</span>, <span class="o">--</span><span class="nv">help</span>   <span class="k">show</span> <span class="nv">this</span> <span class="nv">help</span> <span class="nv">message</span> <span class="nv">and</span> <span class="k">exit</span>
+  <span class="o">-</span><span class="nv">c</span> <span class="nv">COUNT</span>     <span class="nv">Number</span> <span class="nv">of</span> <span class="nv">pings</span> <span class="nv">to</span> <span class="k">send</span>
+  <span class="o">-</span><span class="nv">i</span> <span class="nv">INTERVAL</span>  <span class="nv">Ping</span> <span class="nv">interval</span>
+  <span class="o">-</span><span class="nv">d</span>           <span class="k">Show</span> <span class="nv">timings</span> <span class="k">for</span> <span class="nv">the</span> <span class="nv">entire</span> <span class="nv">connection</span>
+</pre></div>
+
+
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<p>The serviceping tool uses a syntax that mirrors that of the ping commmand.</p>
+<h3 id="ping-port-80-http-on-wwwyahoocom">Ping port 80 (http) on <a href="http://www.yahoo.com">www.yahoo.com</a><a class="headerlink" href="#ping-port-80-http-on-wwwyahoocom" title="Permanent link">&para;</a></h3>
+<p>By pinging <a href="http://www.yahoo.com">www.yahoo.com</a> via http (port 80), we can clearly see the 
+multiple hosts responding and the latency of each request.</p>
+<div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping www.yahoo.com
+<span class="go">SERVICEPING www.yahoo.com:80 (98.139.180.149:80).</span>
+<span class="go">from www.yahoo.com:80 (98.139.183.24:80): time=2.46 ms</span>
+<span class="go">from www.yahoo.com:80 (98.139.180.149:80): time=2.43 ms</span>
+<span class="go">--- www.yahoo.com ping statistics ---</span>
+<span class="go">2 packets transmitted, 2 received, 0% packet loss, time 1704.0ms</span>
+<span class="go">rtt min/avg/max/dev = 2.43/2.44/2.46/4.00 ms</span>
+<span class="gp">$</span>
+</pre></div>
+
+<h3 id="ping-port-4443-https-on-wwwyahoocom">Ping port 4443 (https) on <a href="http://www.yahoo.com">www.yahoo.com</a><a class="headerlink" href="#ping-port-4443-https-on-wwwyahoocom" title="Permanent link">&para;</a></h3>
+<p>Serviceping can also connect to other ports such as the ssl port (443).</p>
+<div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping www.yahoo.com:443
+<span class="go">SERVICEPING www.yahoo.com:443 (98.139.183.24:443).</span>
+<span class="go">from www.yahoo.com:443 (98.139.180.149:443): time=2.89 ms</span>
+<span class="go">from www.yahoo.com:443 (98.139.180.149:443): time=2.81 ms</span>
+<span class="go">--- www.yahoo.com ping statistics ---</span>
+<span class="go">2 packets transmitted, 2 received, 0% packet loss, time 1744.0ms</span>
+<span class="go">rtt min/avg/max/dev = 2.81/2.85/2.89/6.08 ms</span>
+<span class="gp">$</span>
+</pre></div>
+
+<h3 id="pinging-a-url-instead-of-the-port">Pinging a URL instead of the port<a class="headerlink" href="#pinging-a-url-instead-of-the-port" title="Permanent link">&para;</a></h3>
+<p>The serviceping command can also specify send ping requests to a url.  If a URL is specified, it will 
+perform an http get request and show the response, which is useful 
+when hosts are doing unexpected things in a dns
+rotation or behind a reverse proxy or vip.</p>
+<p>In this example we specify a url of <a href="http://cnn.com/">http://cnn.com/</a></p>
+<div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping http://cnn.com/
+<span class="go">SERVICEPING cnn.com:80 (157.166.255.18:80).</span>
+<span class="go">1500 bytes from cnn.com:80 (157.166.255.19:80):response=200 time=87.14 ms</span>
+<span class="go">1448 bytes from cnn.com:80 (157.166.226.25:80):response=200 time=64.82 ms</span>
+<span class="go">1500 bytes from cnn.com:80 (157.166.255.19:80):response=200 time=62.98 ms</span>
+<span class="go">1500 bytes from cnn.com:80 (157.166.255.19:80):response=200 time=78.30 ms</span>
+<span class="go">--- cnn.com ping statistics ---</span>
+<span class="go">4 packets transmitted, 4 received, 0% packet loss, time 4372.0ms</span>
+<span class="go">rtt min/avg/max/dev = 62.98/73.31/87.14/56.00 ms</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>The output shows that two hosts are responding to this request, and that they are returning different amounts of data in their responses.</p>
+<h3 id="pinging-a-url-with-timings">Pinging a URL with timings<a class="headerlink" href="#pinging-a-url-with-timings" title="Permanent link">&para;</a></h3>
+<p>The detailed timing flag adds timings for each step of each request, 
+which is useful for determining the causes of latency issues or errors.</p>
+<p>Here we are doing the previous example with detailed timings.</p>
+<div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping -d http://cnn.com/
+<span class="go">SERVICEPING cnn.com:80 (157.166.255.19:80).</span>
+<span class="go">1386 bytes from cnn.com:80 (157.166.255.19:80):response=200 dns=0.21ms connect=68.36ms request=130.02ms all=198.73ms</span>
+<span class="go">1386 bytes from cnn.com:80 (157.166.226.25:80):response=200 dns=0.30ms connect=66.72ms request=101.07ms all=168.20ms</span>
+<span class="go">1500 bytes from cnn.com:80 (157.166.255.18:80):response=200 dns=0.30ms connect=123.94ms request=203.08ms all=327.43ms</span>
+<span class="go">1386 bytes from cnn.com:80 (157.166.226.26:80):response=200 dns=0.28ms connect=68.32ms request=87.94ms all=156.69ms</span>
+<span class="go">--- cnn.com ping statistics ---</span>
+<span class="go">4 packets transmitted, 4 received, 0% packet loss, time 5009.0ms</span>
+<span class="go">rtt min/avg/max/dev = 156.69/212.76/327.43/138.24 ms</span>
+<span class="gp">$</span>
+</pre></div>
+
+<p>Clearly, the host with address 157.166.226.25 is taking significantly longer 
+to establish the tcp connection and handle the http request.</p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="assets/javascripts/application.a8b5e56f.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"."}})</script>
+      
+    
+  </body>
+</html>
