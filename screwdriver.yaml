@@ -25,7 +25,22 @@ jobs:
   validate_security:
     template: python/validate_security
     requires: [~commit, ~pr]
-  
+
+  validate_documentation:
+    template: python/documentation
+    environment:
+      DOCUMENTATION_PUBLISH: False
+    requires: [~pr]
+
+  validate_package:
+    template: python/package_python
+    environment:
+      PACKAGE_TAG: False
+      PUBLISH: False
+    steps:
+      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
+    requires: [~pr]
+
   generate_version:
     template: python/generate_version
     requires: [~commit]
@@ -33,8 +48,11 @@ jobs:
   publish_test_pypi:
     template: python/package_python
     environment:
+      PACKAGE_TAG: False
       PUBLISH: True
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+    steps:
+      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
     requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security,  generate_version]
 
   verify_test_package:
@@ -43,8 +61,14 @@ jobs:
         PYPI_INDEX_URL: https://test.pypi.org/simple
     requires: [publish_test_pypi]
 
+  publish_documentation:
+    template: python/documentation
+    requires: [verify_test_package]
+
   publish_pypi:
     template: python/package_python
     environment:
       PUBLISH: True
+    steps:
+      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
     requires: [verify_test_package]

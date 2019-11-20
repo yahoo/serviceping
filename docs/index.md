@@ -1,25 +1,9 @@
-# serviceping
-
-[![Build Status](https://cd.screwdriver.cd/pipelines/2881/badge?cache=false)](https://cd.screwdriver.cd/pipelines/2881)
-[![Coverage](https://codecov.io/gh/yahoo/serviceping/branch/master/graph/badge.svg?cache=false)](https://codecov.io/gh/yahoo/serviceping)
-[![Current Version](https://img.shields.io/pypi/v/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
-[![Supported Python Versions](https://img.shields.io/badge/python-3.6,3.7,3.8-blue.svg)](https://pypi.python.org/pypi/serviceping/)
-[![License](https://img.shields.io/pypi/l/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
-
 A utility with a "ping" like interface to ping tcp port services.
-
-## Table of Contents
-
-- [Background](#background)
-- [Install](#install)
-- [Usage](#usage)
-- [Examples](#examples)
-- [Contribute](#contribute)
-- [License](#license)
 
 ## Background
 
-This utility was written to simplify troubleshooting network issues related to talking to network services
+This utility was written to simplify troubleshooting network issues related to talking to 
+network services.
 
 ## Install
 
@@ -124,7 +108,3 @@ $
 
 Clearly, the host with address 157.166.226.25 is taking significantly longer 
 to establish the tcp connection and handle the http request.
-
-## License
-
-This project is licensed under the terms of the [Apache 2.0](LICENSE-Apache-2.0) open source license. Please refer to [LICENSE](LICENSE) for the full terms.
