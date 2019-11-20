@@ -32,6 +32,15 @@ jobs:
       DOCUMENTATION_PUBLISH: False
     requires: [~pr]
 
+  validate_package:
+    template: python/package_python
+    environment:
+      PACKAGE_TAG: False
+      PUBLISH: False
+    steps:
+      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
+    requires: [~pr]
+
   generate_version:
     template: python/generate_version
     requires: [~commit]
