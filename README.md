@@ -2,7 +2,8 @@
 
 [![Build Status](https://cd.screwdriver.cd/pipelines/2881/badge?cache=false)](https://cd.screwdriver.cd/pipelines/2881)
 [![Coverage](https://codecov.io/gh/yahoo/serviceping/branch/master/graph/badge.svg?cache=false)](https://codecov.io/gh/yahoo/serviceping)
-[![Current Version](https://img.shields.io/pypi/v/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
+[![Version](https://img.shields.io/pypi/v/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
+[![Downloads](https://pepy.tech/badge/serviceping)](https://pepy.tech/project/serviceping)
 [![Supported Python Versions](https://img.shields.io/badge/python-3.6,3.7,3.8-blue.svg)](https://pypi.python.org/pypi/serviceping/)
 [![License](https://img.shields.io/pypi/l/serviceping.svg)](https://pypi.python.org/pypi/serviceping/)
 [![Documentation](https://img.shields.io/badge/Documentation-latest-blue.svg)](https://yahoo.github.io/serviceping/)
