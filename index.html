@@ -403,7 +403,7 @@ network services.</p>
 <p>To install serviceping, first make sure you are running Python 3.6+, then simply:</p>
 <div class="admonition command">
 <p class="admonition-title">Command</p>
-<div class="codehilite"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">serviceping</span>
+<div class="codehilite"><pre><span></span><span class="err">pip3 install serviceping</span>
 </pre></div>
 
 </div>
@@ -414,18 +414,18 @@ for a response from a host.  It can perform a  tcp network connection to a port 
 a http or https get request to check a url on a host.</p>
 <p>Since tcp and http requests require multiple operations.  Each request performs all of
 the operations end to end for each request.  The serviceping command adds a 
-<code class="codehilite"><span class="o">-</span><span class="n">d</span></code> flag that will show timings for the different stages the ping request.</p>
+<code class="codehilite"><span class="err">-d</span></code> flag that will show timings for the different stages the ping request.</p>
 <div class="admonition note">
 <p class="admonition-title">The serviceping command line usage information"</p>
-<div class="codehilite"><pre><span></span><span class="nv">usage</span>: <span class="nv">serviceping</span> [<span class="o">-</span><span class="nv">h</span>] [<span class="o">-</span><span class="nv">c</span> <span class="nv">COUNT</span>] [<span class="o">-</span><span class="nv">i</span> <span class="nv">INTERVAL</span>] [<span class="o">-</span><span class="nv">d</span>] <span class="nv">destination</span> [<span class="nv">destination</span> ...]
-<span class="nv">positional</span> <span class="nv">arguments</span>:
-  <span class="nv">destination</span> <span class="nv">Destination</span> <span class="nv">host</span> <span class="nv">or</span> <span class="nv">URL</span>
+<div class="codehilite"><pre><span></span><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
+<span class="n">positional</span> <span class="k">arguments</span><span class="o">:</span>
+  <span class="n">destination</span> <span class="n">Destination</span> <span class="n">host</span> <span class="n">or</span> <span class="n">URL</span>
 
-<span class="nv">optional</span> <span class="nv">arguments</span>:
-  <span class="o">-</span><span class="nv">h</span>, <span class="o">--</span><span class="nv">help</span>   <span class="k">show</span> <span class="nv">this</span> <span class="nv">help</span> <span class="nv">message</span> <span class="nv">and</span> <span class="k">exit</span>
-  <span class="o">-</span><span class="nv">c</span> <span class="nv">COUNT</span>     <span class="nv">Number</span> <span class="nv">of</span> <span class="nv">pings</span> <span class="nv">to</span> <span class="k">send</span>
-  <span class="o">-</span><span class="nv">i</span> <span class="nv">INTERVAL</span>  <span class="nv">Ping</span> <span class="nv">interval</span>
-  <span class="o">-</span><span class="nv">d</span>           <span class="k">Show</span> <span class="nv">timings</span> <span class="k">for</span> <span class="nv">the</span> <span class="nv">entire</span> <span class="nv">connection</span>
+<span class="n">optional</span> <span class="k">arguments</span><span class="o">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="o">,</span> <span class="o">--</span><span class="n">help</span>   <span class="n">show</span> <span class="k">this</span> <span class="n">help</span> <span class="n">message</span> <span class="n">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">c</span> <span class="n">COUNT</span>     <span class="n">Number</span> <span class="n">of</span> <span class="n">pings</span> <span class="n">to</span> <span class="n">send</span>
+  <span class="o">-</span><span class="n">i</span> <span class="n">INTERVAL</span>  <span class="n">Ping</span> <span class="n">interval</span>
+  <span class="o">-</span><span class="n">d</span>           <span class="n">Show</span> <span class="n">timings</span> <span class="k">for</span> <span class="n">the</span> <span class="n">entire</span> <span class="n">connection</span>
 </pre></div>
 
 </div>
