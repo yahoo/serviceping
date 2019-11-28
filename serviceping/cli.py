@@ -32,7 +32,7 @@ def exit_statistics(hostname, start_time, count_sent, count_received, min_time, 
     package_loss = 100 - ((float(count_received) / float(count_sent)) * 100)
     print(f'\b\b--- {hostname} ping statistics ---')
     try:
-        print(f'{count_sent} packages transmitted, {count_received} received, {package_loss}% package loss, time {duration}ms')
+        print(f'{count_sent} packets transmitted, {count_received} received, {package_loss}% packet loss, time {duration}ms')
     except ZeroDivisionError:  # pragma: no cover
         print(f'{count_sent} packets transmitted, {count_received} received, 100% packet loss, time {duration}ms')
     print(
