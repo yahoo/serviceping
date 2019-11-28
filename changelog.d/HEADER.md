@@ -1,1 +1,1 @@
-# Python screwdrivercd helpers changes
+# Serviceping changes
