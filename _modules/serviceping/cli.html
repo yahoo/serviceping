@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>serviceping.cli &#8212; serviceping 19.11.161848 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../sphinxindex.html">serviceping 19.11.161848 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for serviceping.cli</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2013-2015, Yahoo Inc.</span>
+<span class="c1"># Copyrights licensed under the Apache 2.0 License</span>
+<span class="c1"># See the accompanying LICENSE.txt file for terms.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Command line utility providing a ping like interface for pinging tcp/ssl</span>
+<span class="sd">services.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+
+<span class="kn">from</span> <span class="nn">.commandline</span> <span class="kn">import</span> <span class="n">parse_arguments</span>
+<span class="kn">from</span> <span class="nn">.serviceping</span> <span class="kn">import</span> <span class="n">calc_deviation</span>
+<span class="kn">from</span> <span class="nn">.network</span> <span class="kn">import</span> <span class="n">scan</span><span class="p">,</span> <span class="n">ping</span>
+
+
+<span class="n">TIMEOUT</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Set a reasonable timeout value</span>
+
+
+<div class="viewcode-block" id="exit_statistics"><a class="viewcode-back" href="../../serviceping.cli.html#serviceping.cli.exit_statistics">[docs]</a><span class="k">def</span> <span class="nf">exit_statistics</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">count_sent</span><span class="p">,</span> <span class="n">count_received</span><span class="p">,</span> <span class="n">min_time</span><span class="p">,</span> <span class="n">avg_time</span><span class="p">,</span> <span class="n">max_time</span><span class="p">,</span> <span class="n">deviation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print ping exit statistics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">duration_sec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="o">.</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">duration_ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="o">.</span><span class="n">microseconds</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">duration_sec</span> <span class="o">+</span> <span class="n">duration_ms</span>
+    <span class="n">package_loss</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">count_received</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">count_sent</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\b\b</span><span class="s1">--- </span><span class="si">{hostname}</span><span class="s1"> ping statistics ---&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{count_sent}</span><span class="s1"> packages transmitted, </span><span class="si">{count_received}</span><span class="s1"> received, </span><span class="si">{package_loss}</span><span class="s1">% package loss, time </span><span class="si">{duration}</span><span class="s1">ms&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{count_sent}</span><span class="s1"> packets transmitted, </span><span class="si">{count_received}</span><span class="s1"> received, 100% packet loss, time </span><span class="si">{duration}</span><span class="s1">ms&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s1">&#39;rtt min/avg/max/dev = </span><span class="si">%.2f</span><span class="s1">/</span><span class="si">%.2f</span><span class="s1">/</span><span class="si">%.2f</span><span class="s1">/</span><span class="si">%.2f</span><span class="s1"> ms&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">min_time</span><span class="o">.</span><span class="n">seconds</span><span class="o">*</span><span class="mi">1000</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">min_time</span><span class="o">.</span><span class="n">microseconds</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">avg_time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="n">max_time</span><span class="o">.</span><span class="n">seconds</span><span class="o">*</span><span class="mi">1000</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_time</span><span class="o">.</span><span class="n">microseconds</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">deviation</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../serviceping.cli.html#serviceping.cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">command_args</span><span class="p">)</span> <span class="o">=</span> <span class="n">parse_arguments</span><span class="p">()</span>
+
+    <span class="n">rc</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">https</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">command_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http:&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">command_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https:&#39;</span><span class="p">):</span>
+        <span class="n">urlp</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">command_args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">hostname</span> <span class="o">=</span> <span class="n">urlp</span><span class="o">.</span><span class="n">hostname</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">urlp</span><span class="o">.</span><span class="n">port</span>
+        <span class="k">if</span> <span class="n">command_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https:&#39;</span><span class="p">):</span>
+            <span class="n">https</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">port</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">urlp</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;https&#39;</span><span class="p">]:</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="mi">443</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="mi">80</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urlp</span><span class="o">.</span><span class="n">path</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">command_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">hostname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="mi">80</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">count_sent</span> <span class="o">=</span> <span class="n">count_received</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_time</span> <span class="o">=</span> <span class="n">min_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">avg_time</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">deviation</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ip</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">hostname</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">gaierror</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;serviceping: unknown host </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SERVICEPING </span><span class="si">%s</span><span class="s1">:</span><span class="si">%d</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">:</span><span class="si">%d</span><span class="s1">).&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">hostname</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">gaierror</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;serviceping: unknown host </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ping_response</span> <span class="o">=</span> <span class="n">ping</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">https</span><span class="o">=</span><span class="n">https</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="n">count_sent</span><span class="p">)</span>
+            <span class="n">count_sent</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">responding</span><span class="p">:</span>
+                <span class="n">count_received</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_time</span><span class="p">:</span>
+                    <span class="n">max_time</span> <span class="o">=</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">min_time</span> <span class="o">==</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_time</span><span class="p">:</span>
+                    <span class="n">min_time</span> <span class="o">=</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">microseconds</span><span class="p">))</span>
+                <span class="n">avg_time</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">))</span>
+                <span class="n">deviation</span> <span class="o">=</span> <span class="n">calc_deviation</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">avg_time</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+                    <span class="n">times</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span>
+                <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
+                    <span class="n">code_string</span> <span class="o">=</span> <span class="s1">&#39;response=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">code</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">code_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">timings</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">from </span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">):</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                            <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> bytes &#39;</span> <span class="o">%</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">length</span> <span class="k">if</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">length</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                            <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">code_string</span><span class="p">),</span>
+                        <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dns&#39;</span><span class="p">,</span> <span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="s1">&#39;ssl&#39;</span><span class="p">,</span> <span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%.2f</span><span class="s1">ms&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                                <span class="n">d</span><span class="p">,</span>
+                                <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000</span>
+                                <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">microseconds</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+                            <span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">from </span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">):</span><span class="si">%s</span><span class="s1"> time=</span><span class="si">%.2f</span><span class="s1"> ms&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                            <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> bytes &#39;</span> <span class="o">%</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">length</span> <span class="k">if</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">length</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                            <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">code_string</span><span class="p">,</span>
+                            <span class="nb">float</span><span class="p">(</span>
+                                <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000</span>
+                                <span class="o">+</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">durations</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">microseconds</span>
+                            <span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+                        <span class="p">),</span>
+                        <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">()</span>
+                <span class="n">rc</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">error</span> <span class="ow">and</span> <span class="n">ping_response</span><span class="o">.</span><span class="n">error_message</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{ping_response.error_message}</span><span class="s1"> for seq </span><span class="si">{ping_response.sequence}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">rc</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">count</span> <span class="ow">and</span> <span class="n">options</span><span class="o">.</span><span class="n">count</span> <span class="o">==</span> <span class="n">count_sent</span><span class="p">:</span>
+                <span class="n">exit_statistics</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">count_sent</span><span class="p">,</span> <span class="n">count_received</span><span class="p">,</span> <span class="n">min_time</span><span class="p">,</span> <span class="n">avg_time</span><span class="p">,</span> <span class="n">max_time</span><span class="p">,</span> <span class="n">deviation</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">rc</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">exit_statistics</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">count_sent</span><span class="p">,</span> <span class="n">count_received</span><span class="p">,</span> <span class="n">min_time</span><span class="p">,</span> <span class="n">avg_time</span><span class="p">,</span> <span class="n">max_time</span><span class="p">,</span> <span class="n">deviation</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">rc</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../sphinxindex.html">serviceping 19.11.161848 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Yahoo Inc..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
+    </div>
+  </body>
+</html>
