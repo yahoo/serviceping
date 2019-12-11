@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>serviceping.network &#8212; serviceping 19.12.164442 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../sphinxindex.html">serviceping 19.12.164442 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for serviceping.network</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Network port scan functions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+
+<div class="viewcode-block" id="ScanFailed"><a class="viewcode-back" href="../../serviceping.network.html#serviceping.network.ScanFailed">[docs]</a><span class="k">class</span> <span class="nc">ScanFailed</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The scan operation encountered a failure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="scan"><a class="viewcode-back" href="../../serviceping.network.html#serviceping.network.scan">[docs]</a><span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">https</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">65535</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scan a network port</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    host : str</span>
+<span class="sd">        Host or ip address to scan</span>
+
+<span class="sd">    port : int, optional</span>
+<span class="sd">        Port to scan, default=80</span>
+
+<span class="sd">    url : str, optional</span>
+<span class="sd">        URL to perform get request to on the host and port specified</span>
+
+<span class="sd">    https : bool, optional</span>
+<span class="sd">        Perform ssl connection on the socket, default=False</span>
+
+<span class="sd">    timeout : float</span>
+<span class="sd">        Timeout for network operations, default=1</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Result dictionary that contains the following keys:</span>
+<span class="sd">            host - The host or IP address that was scanned</span>
+<span class="sd">            port - The port number that was scanned</span>
+<span class="sd">            state - The state of the port, will be either &quot;open&quot; or &quot;closed&quot;</span>
+<span class="sd">            durations - An ordered dictionary with floating point value of the</span>
+<span class="sd">            time elapsed for each connection operation</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ScanFailed - The scan operation failed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s1">&#39;closed&#39;</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">starts</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">starts</span><span class="p">[</span><span class="s1">&#39;dns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="c1"># DNS Lookup</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hostip</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hostip</span>
+        <span class="n">ends</span><span class="p">[</span><span class="s1">&#39;dns&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">gaierror</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ScanFailed</span><span class="p">(</span><span class="s1">&#39;DNS Lookup failed&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="c1"># TCP Connect</span>
+    <span class="n">starts</span><span class="p">[</span><span class="s1">&#39;connect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">network_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">network_socket</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="n">result_connection</span> <span class="o">=</span> <span class="n">network_socket</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="n">hostip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="n">ends</span><span class="p">[</span><span class="s1">&#39;connect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="c1"># SSL</span>
+    <span class="k">if</span> <span class="n">https</span><span class="p">:</span>
+        <span class="n">starts</span><span class="p">[</span><span class="s1">&#39;ssl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">network_socket</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">wrap_socket</span><span class="p">(</span><span class="n">network_socket</span><span class="p">)</span>  <span class="c1"># nosec</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ScanFailed</span><span class="p">(</span><span class="s1">&#39;SSL socket timeout&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">ends</span><span class="p">[</span><span class="s1">&#39;ssl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="c1"># Get request</span>
+    <span class="k">if</span> <span class="n">result_connection</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">url</span><span class="p">:</span>
+        <span class="n">starts</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">network_socket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+            <span class="s2">&quot;GET </span><span class="si">{0}</span><span class="s2"> HTTP/1.0</span><span class="se">\r\n</span><span class="s2">Host: </span><span class="si">{1}</span><span class="se">\r\n\r\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">url</span><span class="p">,</span> <span class="n">host</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">max_size</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">network_socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">max_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">network_socket</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;response&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">ends</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">network_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># Calculate durations</span>
+    <span class="n">ends</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">duration</span> <span class="ow">in</span> <span class="n">starts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="ow">in</span> <span class="n">ends</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;durations&#39;</span><span class="p">][</span><span class="n">duration</span><span class="p">]</span> <span class="o">=</span> <span class="n">ends</span><span class="p">[</span><span class="n">duration</span><span class="p">]</span> <span class="o">-</span> <span class="n">starts</span><span class="p">[</span><span class="n">duration</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">result_connection</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;open&#39;</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="PingResponse"><a class="viewcode-back" href="../../serviceping.network.html#serviceping.network.PingResponse">[docs]</a><span class="k">class</span> <span class="nc">PingResponse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ping response object</span>
+
+<span class="sd">    Atributes</span>
+<span class="sd">    ---------</span>
+<span class="sd">    host : str</span>
+<span class="sd">        Destination host or IP address</span>
+
+<span class="sd">    port : int</span>
+<span class="sd">        Destination port</span>
+
+<span class="sd">    responding : bool</span>
+<span class="sd">        True if ping response was received</span>
+
+<span class="sd">    data_mismatch : bool</span>
+<span class="sd">        True if the recieved packet did not match the sent packet</span>
+
+<span class="sd">    timeout : bool</span>
+<span class="sd">        True if ping timed out</span>
+
+<span class="sd">    start : float</span>
+<span class="sd">        Time started</span>
+
+<span class="sd">    end : float</span>
+<span class="sd">        Time ended</span>
+
+<span class="sd">    duration: float</span>
+<span class="sd">        The duration of the ping operation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">responding</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data_mismatch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error_message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">sequence</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">responding</span> <span class="o">=</span> <span class="n">responding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_mismatch</span> <span class="o">=</span> <span class="n">data_mismatch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">durations</span> <span class="o">=</span> <span class="n">durations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+        <span class="k">if</span> <span class="n">start</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_timer</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PingResponse.start_timer"><a class="viewcode-back" href="../../serviceping.network.html#serviceping.network.PingResponse.start_timer">[docs]</a>    <span class="k">def</span> <span class="nf">start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PingResponse.stop_timer"><a class="viewcode-back" href="../../serviceping.network.html#serviceping.network.PingResponse.stop_timer">[docs]</a>    <span class="k">def</span> <span class="nf">stop_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;PingResponse(host=</span><span class="si">{self.host!r}</span><span class="s1">, port=</span><span class="si">{self.port!r}</span><span class="s1">, ip=</span><span class="si">{self.ip!r}</span><span class="s1">, sequence=</span><span class="si">{self.sequence!r}</span><span class="s1">, &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;responding=</span><span class="si">{self.responding!r}</span><span class="s1">, data_mismatch=</span><span class="si">{self.data_mismatch!r}</span><span class="s1">, timeout=</span><span class="si">{self.timeout!r}</span><span class="s1">, &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;code=</span><span class="si">{self.code!r}</span><span class="s1">, state=</span><span class="si">{self.state!r}</span><span class="s1">, length=</span><span class="si">{self.length!r}</span><span class="s1">, start=</span><span class="si">{self.start!r}</span><span class="s1">, &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;end=</span><span class="si">{self.end!r}</span><span class="s1">, error=</span><span class="si">{self.error!r}</span><span class="s1">, error_message=</span><span class="si">{self.error_message!r}</span><span class="s1">, &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;durations=</span><span class="si">{self.durations!r}</span><span class="s1">, response=</span><span class="si">{self.response!r}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;ip=</span><span class="si">{self.host}</span><span class="s1">(</span><span class="si">{self.ip}</span><span class="s1">):port=</span><span class="si">{self.port}</span><span class="s1">:responding=</span><span class="si">{self.responding}</span><span class="s1">&#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;{&quot;:error=&quot;+str(self.error)+&quot;:error_message=&quot;+repr(self.error_message) if self.error else &quot;&quot;}&#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;:data_mismatch=</span><span class="si">{self.data_mismatch}</span><span class="s1">&#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;:timeout=</span><span class="si">{self.timeout}</span><span class="s1">:duration=</span><span class="si">{self.duration}</span><span class="s1">&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get The duration based on the timer, or None no timing has been done</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span></div>
+
+
+<div class="viewcode-block" id="ping"><a class="viewcode-back" href="../../serviceping.network.html#serviceping.network.ping">[docs]</a><span class="k">def</span> <span class="nf">ping</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">https</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">65535</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ping a host</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    host: str</span>
+<span class="sd">        The host or ip address to ping</span>
+
+<span class="sd">    port: int, optional</span>
+<span class="sd">        The port to ping, default=80</span>
+
+<span class="sd">    url: str, optional</span>
+<span class="sd">        URL to ping, will do a host/port ping if not provided</span>
+
+<span class="sd">    https: bool, optional</span>
+<span class="sd">        Connect via ssl, default=False</span>
+
+<span class="sd">    timeout: int, optional</span>
+<span class="sd">        Number of seconds to wait for a response before timing out, default=1 second</span>
+
+<span class="sd">    max_size: int, optional</span>
+<span class="sd">        The max size of response that can be retrieved.  This should be a power of 2</span>
+<span class="sd">        default=65535.</span>
+
+<span class="sd">    sequence: int, optional</span>
+<span class="sd">        Sequence number for the ping request</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PingResponse:</span>
+<span class="sd">        The ping response object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">https</span><span class="o">=</span><span class="n">https</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="n">max_size</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ScanFailed</span> <span class="k">as</span> <span class="n">failure</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">failure</span><span class="o">.</span><span class="n">result</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;error_message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">failure</span><span class="p">)</span>
+    <span class="n">result_obj</span> <span class="o">=</span> <span class="n">PingResponse</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ip&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span>
+        <span class="n">durations</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;durations&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">state</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">),</span>
+        <span class="n">length</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">response</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">error</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">error_message</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;error_message&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">responding</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;open&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+        <span class="n">end</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;durations&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;durations&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">result_obj</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">host</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ping</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="mi">8888</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../sphinxindex.html">serviceping 19.12.164442 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Yahoo Inc..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+    </div>
+  </body>
+</html>
