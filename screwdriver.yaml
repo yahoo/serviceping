@@ -1,6 +1,7 @@
 version: 4
 shared:
   environment:
+    CHANGELOG_FILENAME: docs/changelog.md
     PACKAGE_DIRECTORY: serviceping
     
 jobs:
@@ -57,10 +58,6 @@ jobs:
         PYPI_INDEX_URL: https://test.pypi.org/simple
     requires: [publish_test_pypi]
 
-  publish_documentation:
-    template: python/documentation
-    requires: [verify_test_package]
-
   publish_pypi:
     template: python/package_python
     environment:
@@ -68,3 +65,7 @@ jobs:
     steps:
       - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
     requires: [verify_test_package]
+
+  publish_documentation:
+    template: python/documentation
+    requires: [publish_pypi]

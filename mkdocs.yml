@@ -32,6 +32,7 @@ nav:
     - Install: install.md
     - Usage: usage.md
     - Examples: examples.md
+    - Changelog: changelog.md
     - Developer Resources:
         - Code Documentation: sphinxindex.html
     - License: license.txt
