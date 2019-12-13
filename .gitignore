@@ -91,3 +91,4 @@ nosetests.xml
 /build
 /logs
 /documentation
+/artifacts
