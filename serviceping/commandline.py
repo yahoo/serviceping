@@ -24,5 +24,9 @@ def parse_arguments():
     parser.add_argument(
         'destination', nargs='+', help='Destination host or URL'
     )
+    parser.add_argument(
+        "-W", dest="timeout", default=1.0, type=float,
+        help="Time  to  wait  for a response, in seconds. The option affects only timeout in absence of any responses"
+    )
     args = parser.parse_args()
     return args, args.destination

@@ -22,7 +22,7 @@ class ScanFailed(Exception):
         super().__init__(*args, **kwargs)
 
 
-def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
+def scan(host, port=80, url=None, https=False, timeout=1.0, max_size=65535):
     """
     Scan a network port
 
@@ -61,10 +61,9 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
     ends = OrderedDict()
     port = int(port)
     result = dict(
-        host=host, port=port, state='closed', durations=OrderedDict()
+        host=host, port=port, state='closed', durations=OrderedDict(), ssl_version=''
     )
     if url:
-        timeout = 1
         result['code'] = None
 
     starts['all'] = starts['dns'] = datetime.datetime.now()
@@ -90,8 +89,9 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
         try:
             network_socket = ssl.wrap_socket(network_socket)  # nosec
         except socket.timeout:
-            raise ScanFailed('SSL socket timeout', result=result)
+            raise ScanFailed(f'SSL socket timeout ({timeout} seconds)', result=result)
         ends['ssl'] = datetime.datetime.now()
+        result['ssl_version'] = network_socket.version()
 
     # Get request
     if result_connection == 0 and url:
@@ -101,7 +101,10 @@ def scan(host, port=80, url=None, https=False, timeout=1, max_size=65535):
                 url, host
             ).encode('ascii'))
         if max_size:
-            data = network_socket.recv(max_size)
+            try:
+                data = network_socket.recv(max_size)
+            except socket.timeout:
+                raise ScanFailed(f'TCP socket timeout ({timeout} seconds)', result=result)
         else:
             data = network_socket.recv()
         result['length'] = len(data)
@@ -157,7 +160,7 @@ class PingResponse(object):
     def __init__(
             self, host=None, port=0, ip=None, responding=False, data_mismatch=False, timeout=False, code=None,
             state=None, length=0, start=None, end=None, error=False, error_message=None, durations=None, response=None,
-            sequence=0
+            sequence=0, ssl_version=''
     ):
         self.host = host
         self.port = int(port)
@@ -170,6 +173,7 @@ class PingResponse(object):
         self.length = length
         self.durations = durations
         self.sequence = sequence
+        self.ssl_version = ssl_version
         if start:
             self.start = start
         else:
@@ -192,13 +196,13 @@ class PingResponse(object):
                f'responding={self.responding!r}, data_mismatch={self.data_mismatch!r}, timeout={self.timeout!r}, ' \
                f'code={self.code!r}, state={self.state!r}, length={self.length!r}, start={self.start!r}, ' \
                f'end={self.end!r}, error={self.error!r}, error_message={self.error_message!r}, ' \
-               f'durations={self.durations!r}, response={self.response!r})'
+               f'durations={self.durations!r}, ssl_version={self.ssl_version!r}, response={self.response!r})'
 
     def __str__(self):
         return f'ip={self.host}({self.ip}):port={self.port}:responding={self.responding}' \
                f'{":error="+str(self.error)+":error_message="+repr(self.error_message) if self.error else ""}' \
                f':data_mismatch={self.data_mismatch}' \
-               f':timeout={self.timeout}:duration={self.duration}'
+               f':timeout={self.timeout}:ssl_version={self.ssl_version}:duration={self.duration}'
 
     @property
     def duration(self):
@@ -210,7 +214,7 @@ class PingResponse(object):
         return self.end - self.start
 
 
-def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535, sequence=0):
+def ping(host, port=80, url=None, https=False, timeout=1.0, max_size=65535, sequence=0):
     """
     Ping a host
 
@@ -228,7 +232,7 @@ def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535, sequen
     https: bool, optional
         Connect via ssl, default=False
 
-    timeout: int, optional
+    timeout: float, optional
         Number of seconds to wait for a response before timing out, default=1 second
 
     max_size: int, optional
@@ -255,6 +259,7 @@ def ping(host, port=80, url=None, https=False, timeout=1, max_size=65535, sequen
         code=result.get('code', None),
         state=result.get('state', 'unknown'),
         length=result.get('length', 0),
+        ssl_version=result.get('ssl_version', ''),
         response=result.get('response', None),
         error=result.get('error', False),
         error_message=result.get('error_message', None),

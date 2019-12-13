@@ -89,7 +89,7 @@ class TestServicepingScan(unittest.TestCase):
 
     def test_serviceping_pingresponse__str__(self):
         result = ping('localhost', 65500)
-        self.assertIn('ip=localhost(127.0.0.1):port=65500:responding=False:data_mismatch=False:timeout=False:duration=', str(result))
+        self.assertIn('ip=localhost(127.0.0.1):port=65500:responding=False:data_mismatch=False:timeout=False:ssl_version=:duration=', str(result))
 
 
 if __name__ == '__main__':

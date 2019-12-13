@@ -93,7 +93,7 @@ def main():
             return 1
 
         try:
-            ping_response = ping(host=hostname, port=port, url=url, https=https, sequence=count_sent)
+            ping_response = ping(host=hostname, port=port, url=url, https=https, sequence=count_sent, timeout=options.timeout)
             count_sent += 1
             if ping_response.responding:
                 count_received += 1
@@ -106,10 +106,13 @@ def main():
                 deviation = calc_deviation(times, avg_time)
                 if len(times) > 100:
                     times = times[-100:]
+                code_string = ''
+                if ping_response.ssl_version:
+                    code_string += f'ssl={ping_response.ssl_version}'
                 if url:
-                    code_string = 'response=%s' % ping_response.code
-                else:
-                    code_string = ''
+                    if code_string:
+                        code_string += ':'
+                    code_string += 'response=%s' % ping_response.code
                 if options.timings:
                     print(
                         '%sfrom %s:%s (%s:%s):%s' % (
