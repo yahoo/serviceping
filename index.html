@@ -361,8 +361,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ping-port-4443-https-on-wwwyahoocom" class="md-nav__link">
-    Ping port 4443 (https) on www.yahoo.com
+  <a href="#ping-port-443-https-on-wwwyahoocom" class="md-nav__link">
+    Ping port 443 (https) on www.yahoo.com
   </a>
   
 </li>
@@ -377,6 +377,13 @@
           <li class="md-nav__item">
   <a href="#pinging-a-url-with-timings" class="md-nav__link">
     Pinging a URL with timings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pinging-an-ssl-url" class="md-nav__link">
+    Pinging an SSL url
   </a>
   
 </li>
@@ -429,7 +436,7 @@ the operations end to end for each request.  The serviceping command adds a
 <code class="codehilite"><span class="err">-d</span></code> flag that will show timings for the different stages the ping request.</p>
 <div class="admonition note">
 <p class="admonition-title">The serviceping command line usage information"</p>
-<div class="codehilite"><pre><span></span><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
+<div class="codehilite"><pre><span></span><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">W</span> <span class="n">TIMEOUT</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
 <span class="n">positional</span> <span class="k">arguments</span><span class="o">:</span>
   <span class="n">destination</span> <span class="n">Destination</span> <span class="n">host</span> <span class="n">or</span> <span class="n">URL</span>
 
@@ -438,13 +445,16 @@ the operations end to end for each request.  The serviceping command adds a
   <span class="o">-</span><span class="n">c</span> <span class="n">COUNT</span>     <span class="n">Number</span> <span class="n">of</span> <span class="n">pings</span> <span class="n">to</span> <span class="n">send</span>
   <span class="o">-</span><span class="n">i</span> <span class="n">INTERVAL</span>  <span class="n">Ping</span> <span class="n">interval</span>
   <span class="o">-</span><span class="n">d</span>           <span class="n">Show</span> <span class="n">timings</span> <span class="k">for</span> <span class="n">the</span> <span class="n">entire</span> <span class="n">connection</span>
+  <span class="o">-</span><span class="n">W</span> <span class="n">TIMEOUT</span>   <span class="n">Time</span> <span class="n">to</span> <span class="n">wait</span> <span class="k">for</span> <span class="n">a</span> <span class="n">response</span><span class="o">,</span> <span class="k">in</span> <span class="n">seconds</span><span class="o">.</span> <span class="n">The</span> <span class="n">option</span> <span class="n">affects</span> <span class="n">only</span> <span class="n">timeout</span> <span class="k">in</span> <span class="n">absence</span> <span class="n">of</span> <span class="n">any</span> <span class="n">responses</span>
 </pre></div>
 
 </div>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="ping-port-80-http-on-wwwyahoocom">Ping port 80 (http) on <a href="http://www.yahoo.com">www.yahoo.com</a><a class="headerlink" href="#ping-port-80-http-on-wwwyahoocom" title="Permanent link">&para;</a></h3>
-<p>By pinging <a href="http://www.yahoo.com">www.yahoo.com</a> via http (port 80), we can clearly see the 
-multiple hosts responding and the latency of each request.</p>
+<p>By pinging <a href="http://www.yahoo.com">www.yahoo.com</a> via http (port 80), we can clearly see the  multiple hosts responding and the 
+latency of each request.</p>
+<div class="admonition example">
+<p class="admonition-title">serviceping <a href="http://www.yahoo.com">www.yahoo.com</a> port 80</p>
 <div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping www.yahoo.com
 <span class="go">SERVICEPING www.yahoo.com:80 (98.139.180.149:80).</span>
 <span class="go">from www.yahoo.com:80 (98.139.183.24:80): time=2.46 ms</span>
@@ -455,8 +465,11 @@ multiple hosts responding and the latency of each request.</p>
 <span class="gp">$</span>
 </pre></div>
 
-<h3 id="ping-port-4443-https-on-wwwyahoocom">Ping port 4443 (https) on <a href="http://www.yahoo.com">www.yahoo.com</a><a class="headerlink" href="#ping-port-4443-https-on-wwwyahoocom" title="Permanent link">&para;</a></h3>
+</div>
+<h3 id="ping-port-443-https-on-wwwyahoocom">Ping port 443 (https) on <a href="http://www.yahoo.com">www.yahoo.com</a><a class="headerlink" href="#ping-port-443-https-on-wwwyahoocom" title="Permanent link">&para;</a></h3>
 <p>Serviceping can also connect to other ports such as the ssl port (443).</p>
+<div class="admonition example">
+<p class="admonition-title">serviceping <a href="http://www.yahoo.com">www.yahoo.com</a> port 443 (ssl)</p>
 <div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping www.yahoo.com:443
 <span class="go">SERVICEPING www.yahoo.com:443 (98.139.183.24:443).</span>
 <span class="go">from www.yahoo.com:443 (98.139.180.149:443): time=2.89 ms</span>
@@ -467,12 +480,15 @@ multiple hosts responding and the latency of each request.</p>
 <span class="gp">$</span>
 </pre></div>
 
+</div>
 <h3 id="pinging-a-url-instead-of-the-port">Pinging a URL instead of the port<a class="headerlink" href="#pinging-a-url-instead-of-the-port" title="Permanent link">&para;</a></h3>
-<p>The serviceping command can also send requests to a url.  If a URL is 
-specified, it will perform an http or https get request and show the response, which is 
+<p>The serviceping command can also send requests to a a web url.  </p>
+<p>If a URL is specified, it will perform an http or https get request and show the response, which is 
 useful  when hosts are doing unexpected things in a dns rotation or behind a reverse proxy 
 or vip.</p>
-<p>In this example we specify a url of <a href="http://cnn.com/">http://cnn.com/</a></p>
+<p>In the example below we can see that the the responses are coming from multiple IP addresses.</p>
+<div class="admonition example">
+<p class="admonition-title">serviceping <a href="http://cnn.com/">http://cnn.com/</a></p>
 <div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping http://cnn.com/
 <span class="go">SERVICEPING cnn.com:80 (157.166.255.18:80).</span>
 <span class="go">1500 bytes from cnn.com:80 (157.166.255.19:80):response=200 time=87.14 ms</span>
@@ -485,12 +501,15 @@ or vip.</p>
 <span class="gp">$</span>
 </pre></div>
 
+</div>
 <p>The output shows that two hosts are responding to this request, and that they are 
 returning different amounts of data in their responses.</p>
 <h3 id="pinging-a-url-with-timings">Pinging a URL with timings<a class="headerlink" href="#pinging-a-url-with-timings" title="Permanent link">&para;</a></h3>
-<p>The detailed timing flag adds timings for each step of each request, 
-which is useful for determining the causes of latency issues or errors.</p>
+<p>The detailed timing flag adds timings for each step of each request,  which is useful for determining the 
+causes of latency issues or errors.</p>
 <p>Here we are doing the previous example with detailed timings.</p>
+<div class="admonition example">
+<p class="admonition-title">serviceping <a href="http://cnn.com/">http://cnn.com/</a> with timings</p>
 <div class="codehilite"><pre><span></span><span class="gp">$</span> serviceping -d http://cnn.com/
 <span class="go">SERVICEPING cnn.com:80 (157.166.255.19:80).</span>
 <span class="go">1386 bytes from cnn.com:80 (157.166.255.19:80):response=200 dns=0.21ms connect=68.36ms request=130.02ms all=198.73ms</span>
@@ -503,8 +522,28 @@ which is useful for determining the causes of latency issues or errors.</p>
 <span class="gp">$</span>
 </pre></div>
 
-<p>Clearly, the host with address 157.166.255.18 is taking significantly longer 
-to establish the tcp connection and handle the http request.</p>
+</div>
+<p>The host with address 157.166.255.18 is taking significantly longer to establish the tcp connection and 
+handle the http request.</p>
+<h3 id="pinging-an-ssl-url">Pinging an SSL url<a class="headerlink" href="#pinging-an-ssl-url" title="Permanent link">&para;</a></h3>
+<p>When pinging a ssl URL serviceping adds the ssl version information in the response.</p>
+<p>!!! example "serviceping <a href="https://www.cnn.com/">https://www.cnn.com/</a>" with timings</p>
+<div class="codehilite"><pre><span></span><span class="err">```console</span>
+<span class="err">$ serviceping -d https://www.cnn.com/</span>
+<span class="err">SERVICEPING www.cnn.com:443 (151.101.25.67:443).</span>
+<span class="err">1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.58ms connect=10.22ms ssl=97.84ms request=12.07ms all=121.17ms </span>
+<span class="err">1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.59ms connect=11.87ms ssl=95.93ms request=10.98ms all=119.76ms </span>
+<span class="err">1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.56ms connect=11.14ms ssl=95.81ms request=12.49ms all=120.42ms </span>
+<span class="err">1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.60ms connect=10.76ms ssl=179.81ms request=10.72ms all=202.28ms </span>
+<span class="err">--- www.cnn.com ping statistics ---</span>
+<span class="err">4 packets transmitted, 4 received, 0.0% packet loss, time 3910.0370000000003ms</span>
+<span class="err">rtt min/avg/max/dev = 119.76/140.91/202.28/101.14 ms</span>
+<span class="err">$</span>
+<span class="err">```</span>
+</pre></div>
+
+
+<p>In the above example, we can see that all the responses where using TLSv1.2.</p>
                 
                   
                 

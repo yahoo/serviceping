@@ -335,7 +335,7 @@ the operations end to end for each request.  The serviceping command adds a
 <code class="codehilite"><span class="err">-d</span></code> flag that will show timings for the different stages the ping request.</p>
 <div class="admonition note">
 <p class="admonition-title">The serviceping command line usage information"</p>
-<div class="codehilite"><pre><span></span><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
+<div class="codehilite"><pre><span></span><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">W</span> <span class="n">TIMEOUT</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
 <span class="n">positional</span> <span class="k">arguments</span><span class="o">:</span>
   <span class="n">destination</span> <span class="n">Destination</span> <span class="n">host</span> <span class="n">or</span> <span class="n">URL</span>
 
@@ -344,6 +344,7 @@ the operations end to end for each request.  The serviceping command adds a
   <span class="o">-</span><span class="n">c</span> <span class="n">COUNT</span>     <span class="n">Number</span> <span class="n">of</span> <span class="n">pings</span> <span class="n">to</span> <span class="n">send</span>
   <span class="o">-</span><span class="n">i</span> <span class="n">INTERVAL</span>  <span class="n">Ping</span> <span class="n">interval</span>
   <span class="o">-</span><span class="n">d</span>           <span class="n">Show</span> <span class="n">timings</span> <span class="k">for</span> <span class="n">the</span> <span class="n">entire</span> <span class="n">connection</span>
+  <span class="o">-</span><span class="n">W</span> <span class="n">TIMEOUT</span>   <span class="n">Time</span> <span class="n">to</span> <span class="n">wait</span> <span class="k">for</span> <span class="n">a</span> <span class="n">response</span><span class="o">,</span> <span class="k">in</span> <span class="n">seconds</span><span class="o">.</span> <span class="n">The</span> <span class="n">option</span> <span class="n">affects</span> <span class="n">only</span> <span class="n">timeout</span> <span class="k">in</span> <span class="n">absence</span> <span class="n">of</span> <span class="n">any</span> <span class="n">responses</span>
 </pre></div>
 
 </div>
