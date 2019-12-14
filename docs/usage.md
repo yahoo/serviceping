@@ -10,7 +10,7 @@ the operations end to end for each request.  The serviceping command adds a
 !!! note "The serviceping command line usage information""
 
     ```
-    usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-d] destination [destination ...]
+    usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-W TIMEOUT] [-d] destination [destination ...]
     positional arguments:
       destination Destination host or URL
     
@@ -19,4 +19,5 @@ the operations end to end for each request.  The serviceping command adds a
       -c COUNT     Number of pings to send
       -i INTERVAL  Ping interval
       -d           Show timings for the entire connection
+      -W TIMEOUT   Time to wait for a response, in seconds. The option affects only timeout in absence of any responses
     ```

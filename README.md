@@ -13,7 +13,7 @@ A utility with a "ping" like interface to ping tcp port services.
 ## Table of Contents
 
 - [Background](#background)
-- [Install](#install)
+- [Install](https://yahoo.github.io/serviceping/install/)
 - [Usage](#usage)
 - [Examples](https://yahoo.github.io/serviceping/examples/)
 - [License](#license)
@@ -21,14 +21,6 @@ A utility with a "ping" like interface to ping tcp port services.
 ## Background
 
 This utility was written to simplify troubleshooting network issues related to talking to network services
-
-## Install
-
-To install serviceping, first make sure you are running Python 3.6+, then simply:
-
-```
-pip3 install serviceping
-```
 
 ## Usage
 
@@ -42,7 +34,7 @@ the operations end to end for the request.  The serviceping command adds a
 `-d` flag that will show timings for the different stages the ping request.
 
 ```
-usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-d] destination [destination ...]
+usage: serviceping [-h] [-c COUNT] [-i INTERVAL] [-W TIMEOUT] [-d] destination [destination ...]
 positional arguments:
   destination Destination host or URL
 
@@ -51,6 +43,7 @@ optional arguments:
   -c COUNT     Number of pings to send
   -i INTERVAL  Ping interval
   -d           Show timings for the entire connection
+  -W TIMEOUT   Time to wait for a response, in seconds. The option affects only timeout in absence of any responses  
 ```
 
 ## Examples
@@ -135,6 +128,23 @@ $
 
 Clearly, the host with address 157.166.255.18 is taking significantly longer 
 to establish the tcp connection and handle the http request.
+
+### Pinging a SSL URL with timings
+
+When pinging a ssl URL serviceping adds the ssl version information in the response.
+
+```console
+$ serviceping -d https://www.cnn.com/
+SERVICEPING www.cnn.com:443 (151.101.25.67:443).
+1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.58ms connect=10.22ms ssl=97.84ms request=12.07ms all=121.17ms 
+1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.59ms connect=11.87ms ssl=95.93ms request=10.98ms all=119.76ms 
+1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.56ms connect=11.14ms ssl=95.81ms request=12.49ms all=120.42ms 
+1371 bytes from www.cnn.com:443 (151.101.25.67:443):ssl=TLSv1.2:response=200 dns=0.60ms connect=10.76ms ssl=179.81ms request=10.72ms all=202.28ms 
+--- www.cnn.com ping statistics ---
+4 packets transmitted, 4 received, 0.0% packet loss, time 3910.0370000000003ms
+rtt min/avg/max/dev = 119.76/140.91/202.28/101.14 ms
+$
+```
 
 ## License
 
