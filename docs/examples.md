@@ -88,11 +88,11 @@ The host with address 157.166.255.18 is taking significantly longer to establish
 handle the http request.
 
 
-### Pinging an SSL url
+### Pinging a SSL url
 
 When pinging a ssl URL serviceping adds the ssl version information in the response.
 
-!!! example "serviceping https://www.cnn.com/" with timings
+!!! example "serviceping https://www.cnn.com/ with timings"
 
     ```console
     $ serviceping -d https://www.cnn.com/
