@@ -34,7 +34,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -42,12 +42,12 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
@@ -84,7 +84,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="Serviceping" class="md-header-nav__button md-logo">
+        <a href=".." title="Serviceping" aria-label="Serviceping" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -115,7 +115,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -335,7 +335,7 @@ the operations end to end for each request.  The serviceping command adds a
 <code class="codehilite"><span class="err">-d</span></code> flag that will show timings for the different stages the ping request.</p>
 <div class="admonition note">
 <p class="admonition-title">The serviceping command line usage information"</p>
-<div class="codehilite"><pre><span></span><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">W</span> <span class="n">TIMEOUT</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
+<div class="codehilite"><pre><span></span><code><span class="n">usage</span><span class="o">:</span> <span class="n">serviceping</span> <span class="o">[-</span><span class="n">h</span><span class="o">]</span> <span class="o">[-</span><span class="n">c</span> <span class="n">COUNT</span><span class="o">]</span> <span class="o">[-</span><span class="n">i</span> <span class="n">INTERVAL</span><span class="o">]</span> <span class="o">[-</span><span class="n">W</span> <span class="n">TIMEOUT</span><span class="o">]</span> <span class="o">[-</span><span class="n">d</span><span class="o">]</span> <span class="n">destination</span> <span class="o">[</span><span class="n">destination</span> <span class="o">...]</span>
 <span class="n">positional</span> <span class="k">arguments</span><span class="o">:</span>
   <span class="n">destination</span> <span class="n">Destination</span> <span class="n">host</span> <span class="n">or</span> <span class="n">URL</span>
 
@@ -345,7 +345,7 @@ the operations end to end for each request.  The serviceping command adds a
   <span class="o">-</span><span class="n">i</span> <span class="n">INTERVAL</span>  <span class="n">Ping</span> <span class="n">interval</span>
   <span class="o">-</span><span class="n">d</span>           <span class="n">Show</span> <span class="n">timings</span> <span class="k">for</span> <span class="n">the</span> <span class="n">entire</span> <span class="n">connection</span>
   <span class="o">-</span><span class="n">W</span> <span class="n">TIMEOUT</span>   <span class="n">Time</span> <span class="n">to</span> <span class="n">wait</span> <span class="k">for</span> <span class="n">a</span> <span class="n">response</span><span class="o">,</span> <span class="k">in</span> <span class="n">seconds</span><span class="o">.</span> <span class="n">The</span> <span class="n">option</span> <span class="n">affects</span> <span class="n">only</span> <span class="n">timeout</span> <span class="k">in</span> <span class="n">absence</span> <span class="n">of</span> <span class="n">any</span> <span class="n">responses</span>
-</pre></div>
+</code></pre></div>
 
 </div>
                 
@@ -406,9 +406,9 @@ the operations end to end for each request.  The serviceping command adds a
       <div class="md-footer-copyright">
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
@@ -418,9 +418,9 @@ the operations end to end for each request.  The serviceping command adds a
       
     </div>
     
-      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      <script src="../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:".."}})</script>
       
     
   </body>
