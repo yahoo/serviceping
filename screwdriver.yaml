@@ -31,14 +31,14 @@ jobs:
     template: python/documentation
     environment:
       DOCUMENTATION_PUBLISH: False
-    requires: [~pr]
+    requires: [~commit, ~pr]
 
   validate_package:
     template: python/package_python
     environment:
       PACKAGE_TAG: False
       PUBLISH: False
-    requires: [~pr]
+    requires: [~commit, ~pr]
 
   generate_version:
     template: python/generate_version
@@ -48,7 +48,6 @@ jobs:
     template: python/package_python
     environment:
       PACKAGE_TAG: False
-      PUBLISH: True
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
     requires: [generate_version]
 
@@ -60,10 +59,6 @@ jobs:
 
   publish_pypi:
     template: python/package_python
-    environment:
-      PUBLISH: True
-    steps:
-      - package_code: $BASE_PYTHON -m  screwdrivercd.packaging.build_python
     requires: [verify_test_package]
 
   publish_documentation:
