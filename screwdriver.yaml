@@ -48,6 +48,7 @@ jobs:
     template: python/package_python
     environment:
       PACKAGE_TAG: False
+      PUBLISH: False
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
     requires: [generate_version]
 
@@ -59,6 +60,8 @@ jobs:
 
   publish_pypi:
     template: python/package_python
+    environment:
+        PUBLISH: True
     requires: [verify_test_package]
 
   publish_documentation:
