@@ -6,17 +6,15 @@ shared:
     
 jobs:
   validate_test:
-    template: python/validate_unittest
-    environment:
-      TOX_ARGS: -p all --parallel-live
+    template: python-2104/validate_unittest
     requires: [~commit, ~pr]
 
   validate_lint:
-    template: python/validate_lint
+    template: python-2104/validate_lint
     requires: [~commit, ~pr]
 
   validate_codestyle:
-    template: python/validate_codestyle
+    template: python-2104/validate_codestyle
     requires: [~commit, ~pr]
 
   validate_deps:
@@ -24,31 +22,25 @@ jobs:
     requires: [~commit, ~pr]
     
   validate_security:
-    template: python/validate_security
+    template: python-2104/validate_security
     requires: [~commit, ~pr]
 
   validate_documentation:
-    template: python/documentation
-    environment:
-      DOCUMENTATION_PUBLISH: False
+    template: python-2104/documentation
     requires: [~commit, ~pr]
 
   validate_package:
-    template: python/package_python
-    environment:
-      PACKAGE_TAG: False
-      PUBLISH: False
+    template: python-2104/package_python
     requires: [~commit, ~pr]
 
   generate_version:
-    template: python/generate_version
+    template: python-2104/version
     requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security]
   
   publish_test_pypi:
-    template: python/package_python
+    template: python-2104/package_python
     environment:
       PACKAGE_TAG: False
-      PUBLISH: False
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
     requires: [generate_version]
 
@@ -59,11 +51,9 @@ jobs:
     requires: [publish_test_pypi]
 
   publish_pypi:
-    template: python/package_python
-    environment:
-        PUBLISH: True
+    template: python-2104/package_python
     requires: [verify_test_package]
 
   publish_documentation:
-    template: python/documentation
+    template: python-2104/documentation
     requires: [publish_pypi]
