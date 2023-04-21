@@ -8,9 +8,6 @@ fork.  If you do not understand what this means or this process seems
 overly complicated feel free to ask questions on the # channel
 or in the @yahoo-inc.com mailing list.
 
-Prior to submitting a pull request, please complete a
-<a href="https://yahoocla.herokuapp.com/">Yahoo CLA agreement</a>.
-
 General
 -------
 Running and testing code requires installing serviceping.  It
