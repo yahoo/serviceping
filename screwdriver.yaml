@@ -3,6 +3,8 @@ shared:
   environment:
     CHANGELOG_FILENAME: docs/changelog.md
     # PACKAGE_DIRECTORY: serviceping
+  steps:
+    init_os: sd-cmd exec python/python_bootstrap@stable
     
 jobs:
   validate_test:
