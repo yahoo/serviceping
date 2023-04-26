@@ -26,7 +26,7 @@ jobs:
     requires: [~commit, ~pr]
 
   validate_package:
-    template: python-2304/package_python
+    template: python-2104/package_python
     requires: [~commit, ~pr]
 
   generate_version:
@@ -34,7 +34,7 @@ jobs:
     requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security]
   
   publish_test_pypi:
-    template: python-2304/package_python
+    template: python-2104/package_python
     environment:
       PACKAGE_TAG: False
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
@@ -47,7 +47,7 @@ jobs:
     requires: [publish_test_pypi]
 
   publish_pypi:
-    template: python-2304/package_python
+    template: python-2104/package_python
     requires: [verify_test_package]
 
   publish_documentation:
