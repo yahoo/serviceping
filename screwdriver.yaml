@@ -34,7 +34,7 @@ jobs:
     requires: [~commit, ~pr]
 
   generate_version:
-    template: python/version
+    template: python/generate_version
     requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security]
   
   publish_test_pypi:
