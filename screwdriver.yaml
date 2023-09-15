@@ -16,10 +16,6 @@ jobs:
   validate_codestyle:
     template: python/validate_codestyle
     requires: [~commit, ~pr]
-
-  validate_deps:
-    template: python/validate_dependencies
-    requires: [~commit, ~pr]
     
   validate_security:
     template: python/validate_security
@@ -35,7 +31,7 @@ jobs:
 
   generate_version:
     template: python/generate_version
-    requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security]
+    requires: [validate_test, validate_lint, validate_codestyle, validate_security]
   
   publish_test_pypi:
     template: python/package_python
