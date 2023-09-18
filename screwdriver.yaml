@@ -6,39 +6,35 @@ shared:
     
 jobs:
   validate_test:
-    template: python-2104/validate_unittest
+    template: python/validate_unittest
     requires: [~commit, ~pr]
 
   validate_lint:
-    template: python-2104/validate_lint
+    template: python/validate_lint
     requires: [~commit, ~pr]
 
   validate_codestyle:
-    template: python-2104/validate_style
-    requires: [~commit, ~pr]
-
-  validate_deps:
-    template: python/validate_dependencies
+    template: python/validate_codestyle
     requires: [~commit, ~pr]
     
   validate_security:
-    template: python-2104/validate_security
+    template: python/validate_security
     requires: [~commit, ~pr]
 
   validate_documentation:
-    template: python-2104/documentation
+    template: python/documentation
     requires: [~commit, ~pr]
 
   validate_package:
-    template: python-2104/package_python
+    template: python/package_python
     requires: [~commit, ~pr]
 
   generate_version:
-    template: python-2104/version
-    requires: [validate_test, validate_lint, validate_codestyle, validate_deps, validate_security]
+    template: python/generate_version
+    requires: [validate_test, validate_lint, validate_codestyle, validate_security]
   
   publish_test_pypi:
-    template: python-2104/package_python
+    template: python/package_python
     environment:
       PACKAGE_TAG: False
       TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
@@ -51,9 +47,9 @@ jobs:
     requires: [publish_test_pypi]
 
   publish_pypi:
-    template: python-2104/package_python
+    template: python/package_python
     requires: [verify_test_package]
 
   publish_documentation:
-    template: python-2104/documentation
+    template: python/documentation
     requires: [publish_pypi]
