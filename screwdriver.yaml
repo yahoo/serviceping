@@ -3,6 +3,7 @@ shared:
   environment:
     CHANGELOG_FILENAME: docs/changelog.md
     # PACKAGE_DIRECTORY: serviceping
+    TOX_ENVLIST: py39,py310,py311,py312
     
 jobs:
   validate_test:
