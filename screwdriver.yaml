@@ -3,6 +3,7 @@ shared:
   environment:
     CHANGELOG_FILENAME: docs/changelog.md
     # PACKAGE_DIRECTORY: serviceping
+    TOX_ENVLIST: py39,py310,py311
     
 jobs:
   validate_test:
@@ -19,10 +20,6 @@ jobs:
     
   validate_security:
     template: python/validate_security
-    requires: [~commit, ~pr]
-
-  validate_documentation:
-    template: python/documentation
     requires: [~commit, ~pr]
 
   validate_package:
